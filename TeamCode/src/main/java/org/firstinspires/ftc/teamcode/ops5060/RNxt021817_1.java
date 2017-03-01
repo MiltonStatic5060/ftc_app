@@ -24,7 +24,7 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
  */
 
 //@TeleOp(name = "Template", group = "Concept")
-@Autonomous(name = "Template", group = "Concept")
+@Autonomous(name = "Robot Control 1", group = "TeleOp")
 @Disabled
 public class RNxt021817_1 extends LinearOpMode {
     //DECLARATION
@@ -38,12 +38,18 @@ public class RNxt021817_1 extends LinearOpMode {
     //r_catapult
     DcMotor motorCat;
 
+    //r_ballCollection
+    DcMotor motorConv;
+    DcMotor motorSweep;
+
     //r_ballGate
     Servo servoGate1;
     Servo servoGate2;
 
     //r_sense
     ColorSensor color1;
+    UltrasonicSensor ultra1;
+    UltrasonicSensor ultra2;
 
     @Override public void runOpMode() {
 
@@ -58,13 +64,19 @@ public class RNxt021817_1 extends LinearOpMode {
         //r_catapult
         motorCat = hardwareMap.dcMotor.get("catapult");
 
+        //r_ballCollection
+        motorConv = hardwareMap.dcMotor.get("conveyor");
+        motorSweep = hardwareMap.dcMotor.get("sweeper");
+
         //r_ballGate
-        servoGate2 = hardwareMap.servo.get("gate1");
-        servoGate1 = hardwareMap.servo.get("gate2");
+        //servoGate2 = hardwareMap.servo.get("gate2");
+        servoGate1 = hardwareMap.servo.get("gate1");
 
         //r_sense
-        color1 = hardwareMap.colorSensor.get("color1");
-        
+        //color1 = hardwareMap.colorSensor.get("color1");
+        ultra1 = hardwareMap.ultrasonicSensor.get("ultra1");
+        ultra2 = hardwareMap.ultrasonicSensor.get("ultra2");
+
         /**
          * Wait until we've been given the ok to go. For something to do, we emit the
          * elapsed time as we sit here and wait. If we didn't want to do anything while
@@ -115,7 +127,7 @@ public class RNxt021817_1 extends LinearOpMode {
             r_catapult();
             r_ballGate();
             r_ballCollection();
-            r_buttonPusher();
+            //r_buttonPusher();
             r_sense();
 
             // As an illustration, show some loop timing information
@@ -182,8 +194,8 @@ public class RNxt021817_1 extends LinearOpMode {
 
         servoGate1.setPosition(Range.clip(pos1,0,1));
         telemetry.addData("Gate 1",Range.clip(pos1,0,1));
-        servoGate2.setPosition(Range.clip(pos2,0,1));
-        telemetry.addData("Gate 2", Range.clip(pos2,0,1));
+        //servoGate2.setPosition(Range.clip(pos2,0,1));
+        //telemetry.addData("Gate 2", Range.clip(pos2,0,1));
     }
 
     private void r_ballCollection(){
@@ -205,8 +217,8 @@ public class RNxt021817_1 extends LinearOpMode {
 
         telemetry.addData("Sweeper Power",Range.clip(powSweep,-1,1));
         telemetry.addData("Conveyor Power", Range.clip(powConv,-1,1));
-        //motor.setPower(Range.clip(powSweep,-1,1));
-        //motor.setPower(Range.clip(powConv,-1,1));
+        motorSweep.setPower(Range.clip(powSweep,-1,1));
+        motorConv.setPower(Range.clip(powConv,-1,1));
     }
 
     private void r_buttonPusher(){
@@ -235,11 +247,11 @@ public class RNxt021817_1 extends LinearOpMode {
     }
 
     private void r_sense(){
-        telemetry.addData("Red",color1.red());
-        telemetry.addData("Green",color1.green());
-        telemetry.addData("Blue",color1.blue());
-        //telemetry.addData("Front Distance",ultra);
-        //telemetry.addData("Back Distance",ultra);
+        //telemetry.addData("Red",color1.red());
+        //telemetry.addData("Green",color1.green());
+        //telemetry.addData("Blue",color1.blue());
+        telemetry.addData("Ultrasonic 1",ultra1.getUltrasonicLevel());
+        telemetry.addData("Ultrasonic 2",ultra2.getUltrasonicLevel());
         //telemetry.addData("Left Distance",ultra);
         //telemetry.addData("Right Distance",ultra);
     }

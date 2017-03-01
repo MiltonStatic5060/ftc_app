@@ -65,11 +65,17 @@ public class ConceptRegisterOpModes
   public static void registerMyOpModes(OpModeManager manager) {
     // Un-comment any line to enable that sample.
     // Or add your own lines to register your Team opmodes.
-    manager.register("General Opmode",GeneralOp.class);
-    manager.register("Ramp Motor",ConceptRampMotorSpeed.class);
-    manager.register("Robot TeleOp 1",RNxt1.class);
-    manager.register("Robot TeleOp 2",RNxt021817_1.class);
+    
+    
+    manager.register("Robot TeleOp 1",RNxt021817_1.class);
+
+    manager.register("Robot TeleOp Old",RNxt1.class);
+
+    manager.register("Drive Test",RNxtMotorTest.class);
+    
     manager.register("Robot SenseTest 1",RNxtSense1.class);
+
+    manager.register("General Opmode",GeneralOp.class);
     // Basic Templates
     // manager.register("Iterative Opmode",       TemplateOpMode_Iterative.class);
     // manager.register("Linear Opmode",          TemplateOpMode_Linear.class);
