@@ -26,7 +26,7 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 //@TeleOp(name = "Template", group = "Concept")
 @Autonomous(name = "Robot Control 1", group = "TeleOp")
 @Disabled
-public class RNxt021817_1 extends LinearOpMode {
+public class RNxt021817A_1 extends LinearOpMode {
     //DECLARATION
 
     //r_drivePower
@@ -50,6 +50,12 @@ public class RNxt021817_1 extends LinearOpMode {
     ColorSensor color1;
     UltrasonicSensor ultra1;
     UltrasonicSensor ultra2;
+
+    int autoStep = 0;
+
+    double pi = Math.PI;
+
+    private ElapsedTime runtime = new ElapsedTime();
 
     @Override public void runOpMode() {
 
@@ -122,13 +128,46 @@ public class RNxt021817_1 extends LinearOpMode {
         int loopCount = 1;
 
         // Go go gadget robot!
-        while (opModeIsActive()) {
-            r_drivePower();
-            r_catapult();
-            r_ballGate();
-            r_ballCollection();
-            //r_buttonPusher();
-            r_sense();
+        if (opModeIsActive()) {
+            //move into position
+            runtime.reset()
+            while(runtime.seconds()<3){
+                a_driveL(0,.5);
+            }
+            //shoot first ball
+            runtime.reset()
+            while(runtime.seconds()<3){
+                motorCat.setPower(-1);
+            }
+            //load second ball
+            runtime.reset()
+            while(runtime.seconds()<2){
+                servoGate1.setPosition(0);
+                motorCat.setPower(-0.3);
+            }
+            //shoot ball
+            runtime.reset()
+            while(runtime.seconds()<3){
+                servoGate1.setPosition(0);
+                motorCat.setPower(-1);
+            }
+
+            //locate big ball and move there
+            runtime.reset()
+            //while(runtime.seconds()<2){}
+            //push big ball
+            runtime.reset()
+            //while(runtime.seconds()<2){}
+
+
+            /* TeleOp Methods
+                //r_drivePower();
+                //r_catapult();
+                //r_ballGate();
+                //r_ballCollection();
+                //r_buttonPusher();
+                //r_sense();
+            */
 
             // As an illustration, show some loop timing information
             telemetry.addData("loop count", loopCount);
@@ -145,6 +184,65 @@ public class RNxt021817_1 extends LinearOpMode {
             loopCount++;
         }
     }
+
+    //0 is forward, 90 is left -90 is right, -+180 is backwards
+    private void a_driveL(double deg, double pow){
+
+        double rad = Math.toRadians(deg+270);
+
+        double left_x = pow*Math.cos(rad);
+        double left_y = pow*Math.sin(rad);
+        double right_x  = 0;
+        double right_y = 0;
+
+        double powLeft1 =  Range.clip(left_y+right_y - left_x - right_x,-1,1);
+        double powRight1 = Range.clip(left_y+right_y + left_x + right_x,-1,1);
+        double powLeft =   Range.clip(left_y+right_y - left_x + right_x,-1,1);
+        double powRight =  Range.clip(left_y+right_y + left_x - right_x,-1,1);
+
+        powRight1*=0.8;
+        powRight*=0.9;
+
+
+        telemetry.addData("Front Left", powLeft1);
+        telemetry.addData("Front Right", powRight1);
+        telemetry.addData("Back Left", powLeft);
+        telemetry.addData("Back Right", powRight);
+
+        motorRight.setPower(powRight);
+        motorLeft.setPower(powLeft);
+        motorRight1.setPower(powRight1);
+        motorLeft1.setPower(powLeft1);
+    }
+    private void a_driveR(double deg, double pow){
+
+        double rad = Math.toRadians(deg+270);
+
+        double left_x = 0;
+        double left_y = 0;
+        double right_x  = pow*Math.cos(rad);
+        double right_y = pow*Math.sin(rad);
+
+        double powLeft1 =  Range.clip(left_y+right_y - left_x - right_x,-1,1);
+        double powRight1 = Range.clip(left_y+right_y + left_x + right_x,-1,1);
+        double powLeft =   Range.clip(left_y+right_y - left_x + right_x,-1,1);
+        double powRight =  Range.clip(left_y+right_y + left_x - right_x,-1,1);
+
+        powRight1*=0.8;
+        powRight*=0.9;
+
+
+        telemetry.addData("Front Left", powLeft1);
+        telemetry.addData("Front Right", powRight1);
+        telemetry.addData("Back Left", powLeft);
+        telemetry.addData("Back Right", powRight);
+
+        motorRight.setPower(powRight);
+        motorLeft.setPower(powLeft);
+        motorRight1.setPower(powRight1);
+        motorLeft1.setPower(powLeft1);
+    }
+
     private void r_drivePower(){
         double left_x = Range.clip(gamepad1.left_stick_x+gamepad2.left_stick_x,-1,1);
         double left_y = Range.clip(gamepad1.left_stick_y+gamepad2.left_stick_y,-1,1);
