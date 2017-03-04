@@ -159,27 +159,39 @@ public class RNxt021817A_1 extends LinearOpMode {
 
     private void r_autonomous(){
         //Move into position
+            double dist1 = ultra1.getUltrasonicLevel();
+
             runtime.reset();
-            while(runtime.seconds()<3){
+            while(ultra1.getUltrasonicLevel()<dist1+50){
                 a_driveL(0,.5);
+            }
+            while(ultra1.getUltrasonicLevel()>dist1+80){
+                a_driveL(0,-.2);
             }
         //Shoot Balls
             //shoot first ball
             runtime.reset();
             while(runtime.seconds()<3){
+                a_driveL(0,0);
                 motorCat.setPower(-1);
             }
             //load second ball
             runtime.reset();
             while(runtime.seconds()<2){
+                a_driveL(0,0);
                 servoGate1.setPosition(0);
                 motorCat.setPower(-0.3);
             }
             //shoot ball
             runtime.reset();
             while(runtime.seconds()<3){
+                a_driveL(0,0);
                 servoGate1.setPosition(0);
                 motorCat.setPower(-1);
+            }
+            runtime.reset();
+            while(runtime.seconds()<1){
+                motorCat.setPower(0.1);
             }
         //Push Cap Ball
             //locate big ball and move there

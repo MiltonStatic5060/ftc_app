@@ -51,6 +51,12 @@ public class RNxt021817_1 extends LinearOpMode {
     UltrasonicSensor ultra1;
     UltrasonicSensor ultra2;
 
+    //r_sense
+    LightSensor light1;
+    LightSensor light2;
+    UltrasonicSensor ultra2Arm;
+    UltrasonicSensor ultra2But;
+
     @Override public void runOpMode() {
 
         //INITIALIZATION
@@ -76,6 +82,12 @@ public class RNxt021817_1 extends LinearOpMode {
         //color1 = hardwareMap.colorSensor.get("color1");
         ultra1 = hardwareMap.ultrasonicSensor.get("ultra1");
         ultra2 = hardwareMap.ultrasonicSensor.get("ultra2");
+
+        //r_sense
+        light1 = hardwareMap.lightSensor.get("light1");
+        light2 = hardwareMap.lightSensor.get("light2");
+        ultra2But = hardwareMap.ultrasonicSensor.get("ultra2but");
+        ultra2Arm = hardwareMap.ultrasonicSensor.get("ultra2arm");
 
         /**
          * Wait until we've been given the ok to go. For something to do, we emit the
@@ -258,6 +270,11 @@ public class RNxt021817_1 extends LinearOpMode {
         //telemetry.addData("Blue",color1.blue());
         telemetry.addData("Ultrasonic 1",ultra1.getUltrasonicLevel());
         telemetry.addData("Ultrasonic 2",ultra2.getUltrasonicLevel());
+        telemetry.addData("Light 1", light1.getLightDetected());
+        telemetry.addData("Light 2", light2.getLightDetected());
+        telemetry.addData("Dist Body to Arm",ultra2Arm.getUltrasonicLevel());
+        telemetry.addData("Dist Arm to Ext", ultra2But.getUltrasonicLevel());
+        //telemetry.addData("Light 3", touch1.getLightDetected());
         //telemetry.addData("Left Distance",ultra);
         //telemetry.addData("Right Distance",ultra);
     }
