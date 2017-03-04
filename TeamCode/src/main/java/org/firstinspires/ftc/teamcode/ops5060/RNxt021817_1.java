@@ -69,7 +69,7 @@ public class RNxt021817_1 extends LinearOpMode {
         motorSweep = hardwareMap.dcMotor.get("sweeper");
 
         //r_ballGate
-        //servoGate2 = hardwareMap.servo.get("gate2");
+        servoGate2 = hardwareMap.servo.get("gate2");
         servoGate1 = hardwareMap.servo.get("gate1");
 
         //r_sense
@@ -191,15 +191,17 @@ public class RNxt021817_1 extends LinearOpMode {
             pos1 = 0;
             
         }
-        if(gamepad1.dpad_down||gamepad2.dpad_down){
-            
-            pos2 = 0;
+        if(gamepad1.dpad_right||gamepad2.dpad_right){
+            pos2 -= 0.5;
+        }
+        if(gamepad1.dpad_left||gamepad2.dpad_left){
+            pos2 += 0.5;
         }
 
         servoGate1.setPosition(Range.clip(pos1,0,1));
         telemetry.addData("Gate 1",Range.clip(pos1,0,1));
-        //servoGate2.setPosition(Range.clip(pos2,0,1));
-        //telemetry.addData("Gate 2", Range.clip(pos2,0,1));
+        servoGate2.setPosition(Range.clip(pos2,0,1));
+        telemetry.addData("Button Pusher", Range.clip(pos2,0,1));
     }
 
     private void r_ballCollection(){

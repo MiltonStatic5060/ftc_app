@@ -69,13 +69,15 @@ public class ConceptRegisterOpModes
     
     manager.register("Robot TeleOp 1",RNxt021817_1.class);
 
-    manager.register("Robot TeleOp Old",RNxt1.class);
+    manager.register("Robot Auto 1", RNxt021817A_1.class);
 
-    manager.register("Drive Test",RNxtMotorTest.class);
+    //manager.register("Robot TeleOp Old",RNxt1.class);
+
+    //manager.register("Drive Test",RNxtMotorTest.class);
     
-    manager.register("Robot SenseTest 1",RNxtSense1.class);
+    //manager.register("Robot SenseTest 1",RNxtSense1.class);
 
-    manager.register("General Opmode",GeneralOp.class);
+    //manager.register("General Opmode",GeneralOp.class);
     // Basic Templates
     // manager.register("Iterative Opmode",       TemplateOpMode_Iterative.class);
     // manager.register("Linear Opmode",          TemplateOpMode_Linear.class);

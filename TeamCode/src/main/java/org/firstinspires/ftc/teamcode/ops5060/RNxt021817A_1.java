@@ -75,7 +75,7 @@ public class RNxt021817A_1 extends LinearOpMode {
         motorSweep = hardwareMap.dcMotor.get("sweeper");
 
         //r_ballGate
-        //servoGate2 = hardwareMap.servo.get("gate2");
+        servoGate2 = hardwareMap.servo.get("gate2");
         servoGate1 = hardwareMap.servo.get("gate1");
 
         //r_sense
@@ -129,35 +129,7 @@ public class RNxt021817A_1 extends LinearOpMode {
 
         // Go go gadget robot!
         if (opModeIsActive()) {
-            //move into position
-            runtime.reset()
-            while(runtime.seconds()<3){
-                a_driveL(0,.5);
-            }
-            //shoot first ball
-            runtime.reset()
-            while(runtime.seconds()<3){
-                motorCat.setPower(-1);
-            }
-            //load second ball
-            runtime.reset()
-            while(runtime.seconds()<2){
-                servoGate1.setPosition(0);
-                motorCat.setPower(-0.3);
-            }
-            //shoot ball
-            runtime.reset()
-            while(runtime.seconds()<3){
-                servoGate1.setPosition(0);
-                motorCat.setPower(-1);
-            }
-
-            //locate big ball and move there
-            runtime.reset()
-            //while(runtime.seconds()<2){}
-            //push big ball
-            runtime.reset()
-            //while(runtime.seconds()<2){}
+            r_autonomous();
 
 
             /* TeleOp Methods
@@ -183,6 +155,46 @@ public class RNxt021817A_1 extends LinearOpMode {
             /** Update loop info and play nice with the rest of the {@link Thread}s in the system */
             loopCount++;
         }
+    }
+
+    private void r_autonomous(){
+        //Move into position
+            runtime.reset();
+            while(runtime.seconds()<3){
+                a_driveL(0,.5);
+            }
+        //Shoot Balls
+            //shoot first ball
+            runtime.reset();
+            while(runtime.seconds()<3){
+                motorCat.setPower(-1);
+            }
+            //load second ball
+            runtime.reset();
+            while(runtime.seconds()<2){
+                servoGate1.setPosition(0);
+                motorCat.setPower(-0.3);
+            }
+            //shoot ball
+            runtime.reset();
+            while(runtime.seconds()<3){
+                servoGate1.setPosition(0);
+                motorCat.setPower(-1);
+            }
+        //Push Cap Ball
+            //locate big ball and move there
+                runtime.reset();
+                //while(runtime.seconds()<2){}
+            //push big ball
+                runtime.reset();
+                //while(runtime.seconds()<2){}
+        //Move onto Corner Vortex
+            //rotate first into position
+                runtime.reset();
+                //while(runtime.seconds()<2){}
+            //move onto ramp
+                runtime.reset();
+                //while(runtime.seconds()<2){}
     }
 
     //0 is forward, 90 is left -90 is right, -+180 is backwards
@@ -289,15 +301,17 @@ public class RNxt021817A_1 extends LinearOpMode {
             pos1 = 0;
             
         }
-        if(gamepad1.dpad_down||gamepad2.dpad_down){
-            
-            pos2 = 0;
+        if(gamepad1.dpad_right||gamepad2.dpad_right){
+            pos2 -= 0.5;
+        }
+        if(gamepad1.dpad_left||gamepad2.dpad_left){
+            pos2 += 0.5;
         }
 
         servoGate1.setPosition(Range.clip(pos1,0,1));
         telemetry.addData("Gate 1",Range.clip(pos1,0,1));
-        //servoGate2.setPosition(Range.clip(pos2,0,1));
-        //telemetry.addData("Gate 2", Range.clip(pos2,0,1));
+        servoGate2.setPosition(Range.clip(pos2,0,1));
+        telemetry.addData("Button Pusher", Range.clip(pos2,0,1));
     }
 
     private void r_ballCollection(){
