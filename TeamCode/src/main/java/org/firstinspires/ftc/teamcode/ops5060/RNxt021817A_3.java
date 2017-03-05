@@ -87,7 +87,7 @@ public class RNxt021817A_3 extends LinearOpMode {
         //r_sense
         //color1 = hardwareMap.colorSensor.get("color1");
         ultra1 = hardwareMap.ultrasonicSensor.get("ultra1");
-        ultra2 = hardwareMap.ultrasonicSensor.get("ultra2");
+        //ultra2 = hardwareMap.ultrasonicSensor.get("ultra2");
 
         //r_autonomousColor
         light1 = hardwareMap.lightSensor.get("light1");
@@ -191,7 +191,7 @@ public class RNxt021817A_3 extends LinearOpMode {
             // As an illustration, show some loop timing information
             telemetry.addData("loop count", loopCount);
             //telemetry.addData("ms/loop", "%.3f ms", opmodeRunTime.milliseconds() / loopCount);
-
+            
             
             /**
              * Transmit the telemetry to the driver station, subject to throttling.
@@ -219,7 +219,7 @@ public class RNxt021817A_3 extends LinearOpMode {
                 case 0:
                 //Algorithm to detect blue/red; light1 = red(side) ; light2 = blue(top)
                     //initiate next step when red detected light > .18
-                    //if(light2>0.18){//blue
+                    //if(light2>0.15){//blue
                     if(light1.getLightDetected()>0.18){//red
                         //red detected so break out of while loop and go on to button detecting action
                         r++;
@@ -231,7 +231,7 @@ public class RNxt021817A_3 extends LinearOpMode {
                     break;
                 case 1:
                 //Algorithm to detect black button and then end outer while loop to push button
-                if(light1.getLightDetected()<.04){ //bottom light detector
+                if(light1.getLightDetected()<.05){ //bottom light detector
                     run=false;
                     servoGate1.setPosition(0.75);
                 }
@@ -246,15 +246,15 @@ public class RNxt021817A_3 extends LinearOpMode {
                 servoGate2.setPosition(0);
             }
             //Stop arm if arm  to body distance is too short
-            if(ultra2Arm.getUltrasonicLevel()==255||ultra2Arm.getUltrasonicLevel()<=5){
+            if(ultra2Arm.getUltrasonicLevel()==255||ultra2Arm.getUltrasonicLevel()<=7){
                 servoGate2.setPosition(0.5);
             }
             //Extend arm if arm to button distance is too long
-            if(ultra2But.getUltrasonicLevel()>15){
+            if(ultra2But.getUltrasonicLevel()>13){
                 servoGate2.setPosition(1);
             }
             //Stop arm if arm  to body distance is too long
-            if(ultra2Arm.getUltrasonicLevel()>35){
+            if(ultra2Arm.getUltrasonicLevel()>=21){
                 servoGate2.setPosition(0.5);
             }
             telemetry.addData("Distance from arm to outside", ultra2But.getUltrasonicLevel());
@@ -269,17 +269,19 @@ public class RNxt021817A_3 extends LinearOpMode {
                     servoGate2.setPosition(1);
                     servoGate1.setPosition(1);
                     //Stop arm if arm  to body distance is too long
-                    while(ultra2Arm.getUltrasonicLevel()>35){
+                    while(ultra2Arm.getUltrasonicLevel()>15){
                         servoGate2.setPosition(0);
                         //drive towards the direction left/right 
-                        //double x = -0.1; //left
+                        double x = -0.1; //left
                         //double x = 0.1;  //right
-                        //a_driveR(90,x);
+                        a_driveR(90,x);
                         servoGate1.setPosition(0.5);
                     }
                     a_driveR(0,0);
+                    telemetry.addData("Ext",ultra2But.getUltrasonicLevel());
+                    telemetry.addData("Arm",ultra2Arm.getUltrasonicLevel());
                 }
-                while((ultra2Arm.getUltrasonicLevel()>=20)){
+                while((ultra2Arm.getUltrasonicLevel()>=10)){
                     servoGate2.setPosition(0);
                 }
                 

@@ -81,7 +81,7 @@ public class RNxt021817_1 extends LinearOpMode {
         //r_sense
         //color1 = hardwareMap.colorSensor.get("color1");
         ultra1 = hardwareMap.ultrasonicSensor.get("ultra1");
-        ultra2 = hardwareMap.ultrasonicSensor.get("ultra2");
+        
 
         //r_sense
         light1 = hardwareMap.lightSensor.get("light1");
@@ -269,7 +269,7 @@ public class RNxt021817_1 extends LinearOpMode {
         //telemetry.addData("Green",color1.green());
         //telemetry.addData("Blue",color1.blue());
         telemetry.addData("Ultrasonic 1",ultra1.getUltrasonicLevel());
-        telemetry.addData("Ultrasonic 2",ultra2.getUltrasonicLevel());
+        //telemetry.addData("Ultrasonic 2",ultra2.getUltrasonicLevel());
         telemetry.addData("Light 1", light1.getLightDetected());
         telemetry.addData("Light 2", light2.getLightDetected());
         telemetry.addData("Dist Body to Arm",ultra2Arm.getUltrasonicLevel());

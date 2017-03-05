@@ -69,7 +69,7 @@ public class ConceptRegisterOpModes
     
     manager.register("Robot TeleOp 1",RNxt021817_1.class);
 
-    manager.register("Robot Auto 1", RNxt021817A_1.class);
+    manager.register("Robot Auto Main Red", RNxt021817A_1.class);
     manager.register("Robot Auto Basic", RNxt021817A_2.class);
     manager.register("Robot Auto Test", RNxt021817A_3.class);
     manager.register("Robot Auto Buddy Red", RNxt021817B_Red.class);

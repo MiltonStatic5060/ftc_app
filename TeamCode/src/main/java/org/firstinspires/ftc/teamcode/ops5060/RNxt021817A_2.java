@@ -49,7 +49,7 @@ public class RNxt021817A_2 extends LinearOpMode {
     //r_sense
     ColorSensor color1;
     UltrasonicSensor ultra1;
-    UltrasonicSensor ultra2;
+    //UltrasonicSensor ultra2;
 
     int autoStep = 0;
 
@@ -81,7 +81,7 @@ public class RNxt021817A_2 extends LinearOpMode {
         //r_sense
         //color1 = hardwareMap.colorSensor.get("color1");
         ultra1 = hardwareMap.ultrasonicSensor.get("ultra1");
-        ultra2 = hardwareMap.ultrasonicSensor.get("ultra2");
+        //ultra2 = hardwareMap.ultrasonicSensor.get("ultra2");
 
         /**
          * Wait until we've been given the ok to go. For something to do, we emit the
@@ -160,13 +160,26 @@ public class RNxt021817A_2 extends LinearOpMode {
     private void r_autonomous(){
         //Move into position
             double dist1 = ultra1.getUltrasonicLevel();
-
+            
+                runtime.reset();
+                while(runtime.seconds()<1.5){
+                    a_driveL(0,0.75);
+                }
+            /** h
             runtime.reset();
-            while(runtime.seconds()<1){
+            while(runtime.seconds()<20){
+
+            }
+            while(ultra1.getUltrasonicLevel()<dist1+70){
                 a_driveL(0,.5);
             }
+            while(ultra1.getUltrasonicLevel()>dist1+80){
+                a_driveL(0,-.2);
+            }*/
         //Shoot Balls
             //shoot first ball
+            runtime.reset();
+
             runtime.reset();
             while(runtime.seconds()<3){
                 a_driveL(0,0);
@@ -190,6 +203,29 @@ public class RNxt021817A_2 extends LinearOpMode {
             while(runtime.seconds()<1){
                 motorCat.setPower(0.1);
             }
+            runtime.reset();
+                while(runtime.seconds()<1){
+                    a_driveL(0,0.75);
+            }
+        /**    //load second ball
+            runtime.reset();
+            while(runtime.seconds()<2){
+                a_driveL(0,0);
+                servoGate1.setPosition(0);
+                motorCat.setPower(-0.3);
+            }
+            //shoot ball
+            runtime.reset();
+            while(runtime.seconds()<3){
+                a_driveL(0,0);
+                servoGate1.setPosition(0);
+                motorCat.setPower(-1);
+            }
+            runtime.reset();
+            while(runtime.seconds()<1){
+                motorCat.setPower(0.1);
+            }
+        */
         //Push Cap Ball
             //locate big ball and move there
                 runtime.reset();
@@ -376,7 +412,7 @@ public class RNxt021817A_2 extends LinearOpMode {
         //telemetry.addData("Green",color1.green());
         //telemetry.addData("Blue",color1.blue());
         telemetry.addData("Ultrasonic 1",ultra1.getUltrasonicLevel());
-        telemetry.addData("Ultrasonic 2",ultra2.getUltrasonicLevel());
+        //telemetry.addData("Ultrasonic 2",ultra2.getUltrasonicLevel());
         //telemetry.addData("Left Distance",ultra);
         //telemetry.addData("Right Distance",ultra);
     }

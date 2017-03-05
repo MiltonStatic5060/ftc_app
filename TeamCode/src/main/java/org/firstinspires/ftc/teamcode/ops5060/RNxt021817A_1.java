@@ -51,6 +51,12 @@ public class RNxt021817A_1 extends LinearOpMode {
     UltrasonicSensor ultra1;
     UltrasonicSensor ultra2;
 
+    //r_autonomousColor
+    LightSensor light1;
+    LightSensor light2;
+    UltrasonicSensor ultra2Arm;
+    UltrasonicSensor ultra2But;
+
     int autoStep = 0;
 
     double pi = Math.PI;
@@ -81,7 +87,14 @@ public class RNxt021817A_1 extends LinearOpMode {
         //r_sense
         //color1 = hardwareMap.colorSensor.get("color1");
         ultra1 = hardwareMap.ultrasonicSensor.get("ultra1");
-        ultra2 = hardwareMap.ultrasonicSensor.get("ultra2");
+        //ultra2 = hardwareMap.ultrasonicSensor.get("ultra2");
+
+        //r_autonomousColor
+        light1 = hardwareMap.lightSensor.get("light1");
+        light2 = hardwareMap.lightSensor.get("light2");
+        ultra2But = hardwareMap.ultrasonicSensor.get("ultra2but");
+        ultra2Arm = hardwareMap.ultrasonicSensor.get("ultra2arm");
+
 
         /**
          * Wait until we've been given the ok to go. For something to do, we emit the
@@ -193,13 +206,30 @@ public class RNxt021817A_1 extends LinearOpMode {
             while(runtime.seconds()<1){
                 motorCat.setPower(0.1);
             }
-        //Push Cap Ball
-            //locate big ball and move there
-                runtime.reset();
-                //while(runtime.seconds()<2){}
-            //push big ball
-                runtime.reset();
-                //while(runtime.seconds()<2){}
+
+            //Push Cap Ball
+            runtime.reset();
+            while(runtime.seconds()<1.5){
+                a_driveL(0,0.75);
+            }
+            //Rotate Counter-clockwise 90 degrees
+            runtime.reset();
+                while(runtime.seconds()<1){
+                    a_driveL(-90,.5);
+                }
+            //move forward
+                while(runtime.seconds()<1.5){
+                a_driveL(0,0.75);
+            }
+            //rotate Clockwise 90 degrees
+            runtime.reset();
+                while(runtime.seconds()<1){
+                    a_driveL(90,.5);
+                }
+            //move left into position
+                
+                r_autonomousColor();
+
         //Move onto Corner Vortex
             //rotate first into position
                 runtime.reset();
@@ -207,6 +237,88 @@ public class RNxt021817A_1 extends LinearOpMode {
             //move onto ramp
                 runtime.reset();
                 //while(runtime.seconds()<2){}
+    }
+
+    private void r_autonomousColor(){
+        //TODO:
+        /**
+        * Get Red/Blue Filters; Install Ultrasonic Sensors on arm and body; Install push plate;
+        * Design Auto Driving Scheme; 
+        *
+        */
+        boolean run = true;
+        int r = 0;
+        while(run){
+            
+            switch(r){
+                case 0:
+                //Algorithm to detect blue/red; light1 = red(side) ; light2 = blue(top)
+                    //initiate next step when red detected light > .18
+                    //if(light2>0.15){//blue
+                    if(light1.getLightDetected()>0.18){//red
+                        //red detected so break out of while loop and go on to button detecting action
+                        r++;
+                        servoGate1.setPosition(0);
+                        break;
+                    }
+                //Drive backwards and forwards across light beacon until color detected
+                    //while(){}
+                    break;
+                case 1:
+                //Algorithm to detect black button and then end outer while loop to push button
+                if(light1.getLightDetected()<.05){ //bottom light detector
+                    run=false;
+                    servoGate1.setPosition(0.75);
+                }
+                //Drive backwards and forwards across light beacon until black detected
+                    //while(){} 
+            }
+                
+
+        //Algorithm to keep button pushing arm around object within its reach
+            //Shorten arm if arm to button distance is too short
+            if(ultra2But.getUltrasonicLevel()==255||ultra2But.getUltrasonicLevel()<=10){
+                servoGate2.setPosition(0);
+            }
+            //Stop arm if arm  to body distance is too short
+            if(ultra2Arm.getUltrasonicLevel()==255||ultra2Arm.getUltrasonicLevel()<=7){
+                servoGate2.setPosition(0.5);
+            }
+            //Extend arm if arm to button distance is too long
+            if(ultra2But.getUltrasonicLevel()>13){
+                servoGate2.setPosition(1);
+            }
+            //Stop arm if arm  to body distance is too long
+            if(ultra2Arm.getUltrasonicLevel()>=21){
+                servoGate2.setPosition(0.5);
+            }
+            telemetry.addData("Distance from arm to outside", ultra2But.getUltrasonicLevel());
+            telemetry.addData("Distance from arm to body   ", ultra2Arm.getUltrasonicLevel());
+            
+            //Give ability to drive until driving scheme can be designed
+            r_drivePower();
+        }
+        //two arm push the button
+            for(int i=0; i<2; i++){
+                while(!(ultra2But.getUltrasonicLevel()==255||ultra2But.getUltrasonicLevel()<5)){
+                    servoGate2.setPosition(1);
+                    servoGate1.setPosition(1);
+                    //Stop arm if arm  to body distance is too long
+                    while(ultra2Arm.getUltrasonicLevel()>15){
+                        servoGate2.setPosition(0);
+                        //drive towards the direction left/right 
+                        double x = -0.1; //left
+                        //double x = 0.1;  //right
+                        a_driveR(90,x);
+                        servoGate1.setPosition(0.5);
+                    }
+                    a_driveR(0,0);
+                }
+                while((ultra2Arm.getUltrasonicLevel()>=10)){
+                    servoGate2.setPosition(0);
+                }
+                
+            }
     }
 
     //0 is forward, 90 is left -90 is right, -+180 is backwards
@@ -379,7 +491,7 @@ public class RNxt021817A_1 extends LinearOpMode {
         //telemetry.addData("Green",color1.green());
         //telemetry.addData("Blue",color1.blue());
         telemetry.addData("Ultrasonic 1",ultra1.getUltrasonicLevel());
-        telemetry.addData("Ultrasonic 2",ultra2.getUltrasonicLevel());
+        //telemetry.addData("Ultrasonic 2",ultra2.getUltrasonicLevel());
         //telemetry.addData("Left Distance",ultra);
         //telemetry.addData("Right Distance",ultra);
     }
