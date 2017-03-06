@@ -1,13 +1,33 @@
 # ftc_app
+Welcome to Milton Static's Android application source code!
+
+---
+At first glance, this whole repository might look big and scary, but in reality, it totally isn't.  The only folder you ever need to look at are **doc/** and **TeamCode/**. Basically all of the other stuff is fluff that's only there for the computer to make your android app.  
+
+The **doc/** directory is very important because inside of that is the "documentation", the structure of methods and packages and methods and other confusing looking stuff to write the code.  It also has some base .apk files, like the original **Driver Station** app and the original (but empty) **Robot Controller** app.  This Documentation folder doesn't, however, tell us how to block code the robot from the robot controller app or correctly configure the robot controller app for each individual robot.
+
+The **TeamCode/** directory is important because it contains the important files we want to focus on: opmodes.  Opmodes are the various scripts that tell the robot what to do, whether it's running a motor when we push a button, or running a motor for 10 seconds straight.  These opmodes are written in **Java** so if you don't know Java, find a course online, maybe try [Codecademy](https://www.codecademy.com/learn/learn-java).  There are example opmodes from the past made by previous team programmers (auryan898@gmail.com) and there are some opmodes hidden in the **FtcRobotController/** too.
+
+btw these opmodes are buried deep within a bunch of folders:
+*TeamCode/src/main/java/org/firstinspires/ftc/teamcode/****ops5060/***
+
+
+
+
+
+
+
+---
+#### Description
 FTC Android Studio project to create FTC Robot Controller app.
 
 This is the FTC SDK that can be used to create an FTC Robot Controller app, with custom op modes.
 The FTC Robot Controller app is designed to work in conjunction with the FTC Driver Station app.
 The FTC Driver Station app is available through Google Play.
-
+#### Usage
 To use this SDK, download/clone the entire project to your local computer.
 Use Android Studio to import the folder  ("Import project (Eclipse ADT, Gradle, etc.)").
-
+#### Documentation
 The Javadoc reference documentation for the FTC SDK is now available online.  Visit the following URL to view the FTC SDK documentation as a live website:
 
 http://ftctechnh.github.io/ftc_app/doc/javadoc/index.html
@@ -24,6 +44,7 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 
 
 **************************************************************************************
+#### Releases
 
 Version 2.4 (released on 16.11.13)
   * Fix to avoid crashing for nonexistent resources.
