@@ -20,7 +20,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 
 /**
- * Created by ryan on 2/12/17. auryan898@gmail.com 6176159076
+ * Created by ryan on 2/12/17. auryan898@gmail.com 617-615-9076
  */
 
 //@TeleOp(name = "Template", group = "Concept")
@@ -63,7 +63,7 @@ public class RNxt1 extends LinearOpMode {
         servoClaw = hardwareMap.servo.get("claw");
         servoWrist = hardwareMap.servo.get("wrist");
 
-        
+
         /**
          * Wait until we've been given the ok to go. For something to do, we emit the
          * elapsed time as we sit here and wait. If we didn't want to do anything while
@@ -106,7 +106,7 @@ public class RNxt1 extends LinearOpMode {
         });  */
 
         // Reset to keep some timing stats for the post-'start' part of the opmode
-        
+
         int loopCount = 1;
 
         // Go go gadget robot!
