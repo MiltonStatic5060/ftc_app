@@ -29,15 +29,13 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Demonstrates empty OpMode
@@ -47,8 +45,13 @@ import java.util.Date;
 public class ConceptNullOp extends OpMode {
 
   private ElapsedTime runtime = new ElapsedTime();
-  HardwarePushbot robot       = new HardwarePushbot();
-
+  /**
+  AccelerationSensor variableName;
+  DcMotor variableName;
+  Servo variableName;
+  ServoController variableName;
+  DcMotorController variableName;
+  */
   @Override
   public void init() {
     telemetry.addData("Status", "Initialized");
