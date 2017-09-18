@@ -1,139 +1,172 @@
-/* Copyright (c) 2017 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
- * This file contains an example of an iterative (Non-Linear) "OpMode".
- * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
- * The names of OpModes appear on the menu of the FTC Driver Station.
- * When an selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all iterative OpModes contain.
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
+ * An op mode that uses the geomagnetic and accelerometer values to calculate device
+ * orientation and return those values in telemetry.
+ * It makes use of getRotationMatrix() and getOrientation(), but does not use
+ * remapCoordinateSystem() which one might want.
+ * see: http://developer.android.com/reference/android/hardware/SensorManager.html#remapCoordinateSystem(float[], int, int, float[])
  */
+@Autonomous(name = "OrientOp", group = "Demo")
+public class PhoneSenseOp extends OpMode implements SensorEventListener {
+    private String startDate;
+    private SensorManager mSensorManager;
+    private Sensor accelerometer;
+    private Sensor magnetometer;
+    private Sensor proximity;
+    private Sensor rotationSensor;
 
-@TeleOp(name="Basic: Iterative OpMode", group="Iterative Opmode")
-@Disabled
-public class BasicOpMode_Iterative extends OpMode
-{
-    // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftDrive = null;
-    private DcMotor rightDrive = null;
+    private float azimuth = 0.0f;      // value in radians
+    private float pitch = 0.0f;        // value in radians
+    private float roll = 0.0f;         // value in radians
+    private float proximityValue = 0.0f;
+    private float[] rotationVector = {0.0f,0.0f,0.0f,0.0f,0.0f};
+
+    private float[] mGravity;       // latest sensor values
+    private float[] mGeomagnetic;   // latest sensor values
+    private float[] mProximity;
+    private float[] mRotationVector;
 
     /*
-     * Code to run ONCE when the driver hits INIT
-     */
+    * Constructor
+    */
+    public PhoneSenseOp() {
+
+    }
+
+    /*
+    * Code to run when the op mode is first enabled goes here
+    * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#init()
+    */
     @Override
     public void init() {
-        telemetry.addData("Status", "Initialized");
+        mSensorManager = (SensorManager) hardwareMap.appContext.getSystemService(Context.SENSOR_SERVICE);
+        accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        magnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        proximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        rotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
-
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
-        leftDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);
-
-        // Tell the driver that initialization is complete.
-        telemetry.addData("Status", "Initialized");
+        azimuth = 0.0f;      // value in radians
+        pitch = 0.0f;        // value in radians
+        roll = 0.0f;
+        proximityValue = 0.0f;
+        for(int i=0; i<4; i++) {
+            rotationVector[i] = 0.0f;
+        }
     }
 
     /*
-     * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
-     */
-    @Override
-    public void init_loop() {
-    }
-
-    /*
-     * Code to run ONCE when the driver hits PLAY
-     */
+* Code to run when the op mode is first enabled goes here
+* @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
+*/
     @Override
     public void start() {
-        runtime.reset();
+        startDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
+        // delay value is SENSOR_DELAY_UI which is ok for telemetry, maybe not for actual robot use
+        mSensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(this, proximity, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_STATUS_ACCURACY_HIGH);
     }
 
     /*
-     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
-     */
+    * This method will be called repeatedly in a loop
+    * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
+    */
     @Override
     public void loop() {
-        // Setup a variable for each drive wheel to save power level for telemetry
-        double leftPower;
-        double rightPower;
-
-        // Choose to drive using either Tank Mode, or POV Mode
-        // Comment out the method that's not used.  The default below is POV.
-
-        // POV Mode uses left stick to go forward, and right stick to turn.
-        // - This uses basic math to combine motions and is easier to drive straight.
-        double drive = -gamepad1.left_stick_y;
-        double turn  =  gamepad1.right_stick_x;
-        leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-        rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-
-        // Tank Mode uses one stick to control each wheel.
-        // - This requires no math, but it is hard to drive forward slowly and keep straight.
-        // leftPower  = -gamepad1.left_stick_y ;
-        // rightPower = -gamepad1.right_stick_y ;
-
-        // Send calculated power to wheels
-        leftDrive.setPower(leftPower);
-        rightDrive.setPower(rightPower);
-
-        // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+//        telemetry.addData("1 Start", "OrientOp started at " + startDate);
+//        telemetry.addData("2 note1", "values below are in degrees" );
+//        telemetry.addData("3 note2", "azimuth relates to magnetic north" );
+//        telemetry.addData("4 note3", " " );
+        if (mGravity != null && mGeomagnetic != null && mProximity != null && mRotationVector != null) {
+            telemetry.addData("azimuth", Math.round(Math.toDegrees(azimuth)));
+            telemetry.addData("pitch", Math.round(Math.toDegrees(pitch)));
+            telemetry.addData("roll", Math.round(Math.toDegrees(roll)));
+            telemetry.addData("distance", proximityValue + " cm");
+            telemetry.addData("1 x", String.format("%8.4f, y:%8.4f", rotationVector[0], rotationVector[1]));
+            telemetry.addData("2 z", String.format("%8.4f, cos(θ/2):%8.4f", rotationVector[2], rotationVector[3]));
+            //telemetry.addData("1 x", rotationVector[0]+", y:"+rotationVector[1]);
+            //telemetry.addData("2 z", rotationVector[2]+", cos(θ/2):"+rotationVector[4]);
+            if (rotationVector[4] == -1.0f) {
+                telemetry.addData("3 Accuracy", " value unavailable");
+            } else {
+                telemetry.addData("3 Accuracy", rotationVector[4] + " radians");
+            }
+        }
+        else {
+            if (mGravity != null) {
+                telemetry.addData("note1", "no default accelerometer sensor on phone");
+            }
+            if (mGeomagnetic != null) {
+                telemetry.addData("note2", "no default magnetometer sensor on phone");
+            }
+            if (mProximity != null) {
+                telemetry.addData("note2", "no default proximity sensor on phone");
+            }
+            if (mRotationVector != null) {
+                telemetry.addData("note", "no default rotation sensor on phone");
+            }
+        }
     }
 
     /*
-     * Code to run ONCE after the driver hits STOP
-     */
+    * Code to run when the op mode is first disabled goes here
+    * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#stop()
+    */
     @Override
     public void stop() {
+        mSensorManager.unregisterListener(this);
     }
 
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // not sure if needed, placeholder just in case
+    }
+
+    public void onSensorChanged(SensorEvent event) {
+        // we need both sensor values to calculate orientation
+        // only one value will have changed when this method called, we assume we can still use the other value.
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            mGravity = event.values;
+        }
+        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+            mGeomagnetic = event.values;
+        }
+        if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
+            mProximity = event.values;
+        }
+        if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+            mRotationVector = event.values;
+        }
+        if (mGravity != null && mGeomagnetic != null && mProximity != null && mRotationVector != null) {  //make sure we have both before calling getRotationMatrix
+            float R[] = new float[9];
+            float I[] = new float[9];
+            boolean success = SensorManager.getRotationMatrix(R, I, mGravity, mGeomagnetic);
+            if (success) {
+                float orientation[] = new float[3];
+                SensorManager.getOrientation(R, orientation);
+                azimuth = orientation[0]; // orientation contains: azimuth, pitch and roll
+                pitch = orientation[1];
+                roll = orientation[2];
+            }
+            proximityValue = mProximity[0]; // only one value from this sensor
+            rotationVector[0] = mRotationVector[0];
+            rotationVector[1] = mRotationVector[1];
+            rotationVector[2] = mRotationVector[2];
+            rotationVector[3] = mRotationVector[3];
+            rotationVector[4] = mRotationVector[4];
+        }
+    }
 }
