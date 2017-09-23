@@ -11,9 +11,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * An op mode that uses the geomagnetic and accelerometer values to calculate device
  * orientation and return those values in telemetry.
@@ -23,7 +20,7 @@ import java.util.Date;
  */
 @Autonomous(name = "OrientOp", group = "Demo")
 @Disabled
-public class PhoneSenseOp implements SensorEventListener {
+public class PhoneSenseTools extends OpMode implements SensorEventListener {
     private String startDate;
     private SensorManager mSensorManager;
     private Sensor accelerometer;
@@ -42,21 +39,19 @@ public class PhoneSenseOp implements SensorEventListener {
     private float[] mProximity;
     private float[] mRotationVector;
 
-    HardwareMap hrdwreMap;
+
     /*
     * Constructor
     */
-    public PhoneSenseOp(HardwareMap hrdwreMap) {
-        this.hrdwreMap = hrdwreMap;
-    }
+
 
     /*
     * Code to run when the op mode is first enabled goes here
     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#init()
     */
-
+    @Override
     public void init() {
-        mSensorManager = (SensorManager) hrdwreMap.appContext.getSystemService(Context.SENSOR_SERVICE);
+        mSensorManager = (SensorManager) hardwareMap.appContext.getSystemService(Context.SENSOR_SERVICE);
         accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         proximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
@@ -75,7 +70,7 @@ public class PhoneSenseOp implements SensorEventListener {
 * Code to run when the op mode is first enabled goes here
 * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
 */
-
+    @Override
     public void start() {
 //        startDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
         // delay value is SENSOR_DELAY_UI which is ok for telemetry, maybe not for actual robot use
@@ -89,13 +84,20 @@ public class PhoneSenseOp implements SensorEventListener {
     * This method will be called repeatedly in a loop
     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
     */
-
+    @Override
     public void loop() {
 //        telemetry.addData("1 Start", "OrientOp started at " + startDate);
 //        telemetry.addData("2 note1", "values below are in degrees" );
 //        telemetry.addData("3 note2", "azimuth relates to magnetic north" );
 //        telemetry.addData("4 note3", " " );
 
+    }
+
+    /*
+    * Code to run when the op mode is first disabled goes here
+    * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#stop()
+    */
+    @Override
     public void stop() {
         mSensorManager.unregisterListener(this);
     }
@@ -103,13 +105,6 @@ public class PhoneSenseOp implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // not sure if needed, placeholder just in case
     }
-}
-
-    /*
-    * Code to run when the op mode is first disabled goes here
-    * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#stop()
-    */
-
 
     public void onSensorChanged(SensorEvent event) {
         // we need both sensor values to calculate orientation
@@ -158,23 +153,23 @@ public class PhoneSenseOp implements SensorEventListener {
             //telemetry.addData("1 x", rotationVector[0]+", y:"+rotationVector[1]);
             //telemetry.addData("2 z", rotationVector[2]+", cos(θ/2):"+rotationVector[4]);
             if (rotationVector[4] == -1.0f) {
-//                telemetry.addData("3 Accuracy", " value unavailable");
+                telemetry.addData("3 Accuracy", " value unavailable");
             } else {
-//                telemetry.addData("3 Accuracy", rotationVector[4] + " radians");
+                telemetry.addData("3 Accuracy", rotationVector[4] + " radians");
             }
         }
         else {
             if (mGravity != null) {
-//                telemetry.addData("note1", "no default accelerometer sensor on phone");
+                telemetry.addData("note1", "no default accelerometer sensor on phone");
             }
             if (mGeomagnetic != null) {
-//                telemetry.addData("note2", "no default magnetometer sensor on phone");
+                telemetry.addData("note2", "no default magnetometer sensor on phone");
             }
             if (mProximity != null) {
-//                telemetry.addData("note2", "no default proximity sensor on phone");
+                telemetry.addData("note2", "no default proximity sensor on phone");
             }
             if (mRotationVector != null) {
-//                telemetry.addData("note", "no default rotation sensor on phone");
+                telemetry.addData("note", "no default rotation sensor on phone");
             }
         }
         double[] arr = {

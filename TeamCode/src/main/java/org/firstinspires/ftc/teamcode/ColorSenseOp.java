@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.ftc.resq.Beacon;
@@ -20,7 +21,11 @@ import org.opencv.core.Size;
  * even extend the VisionOpMode class! Be sure to extend it if writing your own OpMode structure.
  */
 @Autonomous(name = "PhoneCamOp", group = "Demo")
+@Disabled
 public class ColorSenseOp extends VisionOpMode {
+    public ColorSenseOp(){
+
+    }
 
     @Override
     public void init() {
@@ -103,17 +108,39 @@ public class ColorSenseOp extends VisionOpMode {
     public void loop() {
         super.loop();
 
-        telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());
-        telemetry.addData("Beacon Center", beacon.getAnalysis().getLocationString());
-        telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
-        telemetry.addData("Beacon Buttons", beacon.getAnalysis().getButtonString());
-        telemetry.addData("Screen Rotation", rotation.getScreenOrientationActual());
-        telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
-        telemetry.addData("Frame Size", "Width: " + width + " Height: " + height);
+//        telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());
+//        telemetry.addData("Beacon Center", beacon.getAnalysis().getLocationString());
+//        telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
+//        telemetry.addData("Beacon Buttons", beacon.getAnalysis().getButtonString());
+//        telemetry.addData("Screen Rotation", rotation.getScreenOrientationActual());
+//        telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
+//        telemetry.addData("Frame Size", "Width: " + width + " Height: " + height);
+        /**
+         * return beacon.getAnalysis().getStateLeft().toString();
+         * */
     }
 
     @Override
     public void stop() {
         super.stop();
+    }
+
+    public String getStateLeft(){
+        return beacon.getAnalysis().getStateLeft().toString();
+    }
+    public String getStateRight(){
+        return beacon.getAnalysis().getStateRight().toString();
+    }
+    public boolean isLeftBlue(){
+        return beacon.getAnalysis().isLeftBlue();
+    }
+    public boolean isLeftRed(){
+        return beacon.getAnalysis().isLeftRed();
+    }
+    public boolean isRightBlue(){
+        return beacon.getAnalysis().isLeftBlue();
+    }
+    public boolean isRightRed(){
+        return beacon.getAnalysis().isLeftRed();
     }
 }
