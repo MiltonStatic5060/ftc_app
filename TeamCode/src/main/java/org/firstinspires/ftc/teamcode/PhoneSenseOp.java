@@ -95,7 +95,7 @@ public class PhoneSenseOp implements SensorEventListener {
 //        telemetry.addData("2 note1", "values below are in degrees" );
 //        telemetry.addData("3 note2", "azimuth relates to magnetic north" );
 //        telemetry.addData("4 note3", " " );
-
+    }
     public void stop() {
         mSensorManager.unregisterListener(this);
     }
@@ -103,7 +103,6 @@ public class PhoneSenseOp implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // not sure if needed, placeholder just in case
     }
-}
 
     /*
     * Code to run when the op mode is first disabled goes here

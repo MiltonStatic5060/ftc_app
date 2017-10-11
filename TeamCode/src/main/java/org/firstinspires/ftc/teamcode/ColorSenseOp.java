@@ -21,7 +21,7 @@ import org.opencv.core.Size;
  * even extend the VisionOpMode class! Be sure to extend it if writing your own OpMode structure.
  */
 @Autonomous(name = "PhoneCamOp", group = "Demo")
-@Disabled
+//@Disabled
 public class ColorSenseOp extends VisionOpMode {
     public ColorSenseOp(){
 
@@ -108,13 +108,13 @@ public class ColorSenseOp extends VisionOpMode {
     public void loop() {
         super.loop();
 
-//        telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());
-//        telemetry.addData("Beacon Center", beacon.getAnalysis().getLocationString());
-//        telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
-//        telemetry.addData("Beacon Buttons", beacon.getAnalysis().getButtonString());
-//        telemetry.addData("Screen Rotation", rotation.getScreenOrientationActual());
-//        telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
-//        telemetry.addData("Frame Size", "Width: " + width + " Height: " + height);
+       telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());
+       telemetry.addData("Beacon Center", beacon.getAnalysis().getLocationString());
+       telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
+       telemetry.addData("Beacon Buttons", beacon.getAnalysis().getButtonString());
+       telemetry.addData("Screen Rotation", rotation.getScreenOrientationActual());
+       telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
+       telemetry.addData("Frame Size", "Width: " + width + " Height: " + height);
         /**
          * return beacon.getAnalysis().getStateLeft().toString();
          * */
