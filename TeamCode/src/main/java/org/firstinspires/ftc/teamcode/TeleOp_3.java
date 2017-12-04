@@ -85,13 +85,17 @@ public class TeleOp_3 extends OpMode {
         relicLifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);  
 
         motorFL.setDirection(     DcMotor.Direction.FORWARD );                
-        motorFR.setDirection(     DcMotor.Direction.REVERSE );
+        motorFR.setDirection(     DcMotor.Direction.FORWARD );
         motorBL.setDirection(     DcMotor.Direction.FORWARD );
-        motorBR.setDirection(     DcMotor.Direction.REVERSE );
+        motorBR.setDirection(     DcMotor.Direction.FORWARD );
+
+        blockLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.blockLift.setTargetPosition(0);
+        blockLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     @Override
     public void loop(){
-        //loop_drive();
+        loop_drive();
         loop_grabber();
     }
     @Override
@@ -152,9 +156,9 @@ public class TeleOp_3 extends OpMode {
         double rightAng = Range.clip((1-this.gamepad1.right_trigger)*this.BLOCK_GRAB_LIM+1-this.BLOCK_GRAB_LIM,this.BLOCK_GRAB_LIM,1);
         this.blockGrabL.setPosition(leftAng);
         this.blockGrabR.setPosition(rightAng);
-        this.blockLift.setPower(0.5);
+        // this.blockLift.setPower(0.5);
         this.blockLift.setTargetPosition( (int)Math.floor((1-this.gamepad1.left_trigger)*-1800) );
-        // blockLift.setMode(DcMotor.RunMode);
+        // blockLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //STOP_AND_RESET_ENCODER - current encoder position zero
         //RUN_TO_POSITION - go to target encoder
         //RUN_USING_ENCODER - constant velocity
