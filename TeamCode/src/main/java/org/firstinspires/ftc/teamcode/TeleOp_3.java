@@ -29,17 +29,18 @@ public class TeleOp_3 extends OpMode {
     public DcMotor  relicPusher;
     public DcMotor  relicLifter;
     public Servo    relicClaw;
+    public Servo    relicPanel;
 
     public ColorSensor colorSensor;
 
     /* Robot constants */
-    public static final double BLOCK_LIFT_LIM = -2880; //Number of encoder degrees
-    public static final double RELIC_LIFT_LIM = 1440.0/3.0; //Number of encoder degrees
-    public static final double BLOCK_GRAB_LIM = 0.55 ; //0.0 to 1.0 servo degrees
-    public static final double RELIC_CLAW_LIM = 0.5; //0.0 to 1.0 servo degrees
-    public static final double BLUE_THRESHOLD  = 0;  //Should be int 0 to around 15 
-    public static final double RED_THRESHOLD   = 0;  //Should be int 0 to around 15
-    public static final double GREEN_THRESHOLD = 0;  //Should be int 0 to around 15
+    public static final double BLOCK_LIFT_LIM = 2800; //Number of encoder degrees
+    public static final double RELIC_LIFT_LIM = -650; //Number of encoder degrees
+    public static final double BLOCK_GRAB_LIM = 0.45 ; //0.0 to 1.0 servo degrees
+    public static final double RELIC_CLAW_LIM = 0.3; //0.0 to 1.0 servo degrees
+    public static final double BLUE_THRESHOLD  = 4;  //Should be int 0 to around 15 
+    public static final double RED_THRESHOLD   = 4;  //Should be int 0 to around 15
+    public static final double GREEN_THRESHOLD = 4;  //Should be int 0 to around 15
     
     @Override
     public void init(){
@@ -54,6 +55,7 @@ public class TeleOp_3 extends OpMode {
         relicLifter = hardwareMap.get( DcMotor.class , "relicLifter" );
         relicClaw   = hardwareMap.get( Servo.class   , "relicClaw"   );
         colorSensor = hardwareMap.get( ColorSensor.class, "colorSensor");
+        relicPanel  = hardwareMap.get( Servo.class   , "relicPanel");
 
         
 
@@ -63,7 +65,8 @@ public class TeleOp_3 extends OpMode {
         
         blockGrabL.setDirection(  Servo.Direction.FORWARD   );
         blockGrabR.setDirection(  Servo.Direction.FORWARD   );
-        relicClaw.setDirection(   Servo.Direction.FORWARD   );        
+        relicClaw.setDirection(   Servo.Direction.REVERSE   );     
+        relicPanel.setDirection(  Servo.Direction.REVERSE   );     
         
         // Set all motors to zero power
         motorFL.setPower(0);
@@ -84,10 +87,10 @@ public class TeleOp_3 extends OpMode {
         relicPusher.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         relicLifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);  
 
-        motorFL.setDirection(     DcMotor.Direction.FORWARD );                
-        motorFR.setDirection(     DcMotor.Direction.FORWARD );
-        motorBL.setDirection(     DcMotor.Direction.FORWARD );
-        motorBR.setDirection(     DcMotor.Direction.FORWARD );
+        motorFL.setDirection( DcMotor.Direction.FORWARD );                
+        motorFR.setDirection( DcMotor.Direction.FORWARD );
+        motorBL.setDirection( DcMotor.Direction.FORWARD );
+        motorBR.setDirection( DcMotor.Direction.REVERSE );
 
         blockLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.blockLift.setTargetPosition(0);
@@ -97,6 +100,8 @@ public class TeleOp_3 extends OpMode {
     public void loop(){
         loop_drive();
         loop_grabber();
+        loop_colortest();
+        loop_relic();
     }
     @Override
     public void start(){
@@ -146,28 +151,53 @@ public class TeleOp_3 extends OpMode {
         double powBR =  Range.clip( left_y + right_y - left_x + right_x , -1 , 1 );
         double powBL =  Range.clip( left_y + right_y + left_x - right_x , -1 , 1 );
 
-        this.motorFR.setPower(-powFR);
-        this.motorFL.setPower(powFL);
-        this.motorBR.setPower(powBR);
-        this.motorBL.setPower(powBL);
+        motorFR.setPower(powFR);
+        motorFL.setPower(powFL);
+        motorBR.setPower(powBR);
+        motorBL.setPower(powBL);
     }
     public void loop_grabber(){
-        double leftAng  = Range.clip(this.gamepad1.right_trigger*this.BLOCK_GRAB_LIM,0,1-this.BLOCK_GRAB_LIM);
-        double rightAng = Range.clip((1-this.gamepad1.right_trigger)*this.BLOCK_GRAB_LIM+1-this.BLOCK_GRAB_LIM,this.BLOCK_GRAB_LIM,1);
-        this.blockGrabL.setPosition(leftAng);
-        this.blockGrabR.setPosition(rightAng);
-        // this.blockLift.setPower(0.5);
-        this.blockLift.setTargetPosition( (int)Math.floor((1-this.gamepad1.left_trigger)*-1800) );
-        // blockLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        double leftAng  = Range.clip(gamepad1.right_trigger*BLOCK_GRAB_LIM,0,1-BLOCK_GRAB_LIM);
+        double rightAng = Range.clip((1-gamepad1.right_trigger)*BLOCK_GRAB_LIM+1-BLOCK_GRAB_LIM,BLOCK_GRAB_LIM,1);
+        blockGrabL.setPosition(leftAng);
+        blockGrabR.setPosition(rightAng);
+        // blockLift.setPower(0.5);
+        blockLift.setTargetPosition( (int)Math.floor((gamepad1.left_trigger)*BLOCK_LIFT_LIM) );
+        telemetry.addData("Block Lifter Target Position",(int)Math.floor((gamepad1.left_trigger)*2800));
+        telemetry.addData("Block Lifter Current Position,",blockLift.getCurrentPosition());
+        if(gamepad1.left_bumper)
+            blockLift.setPower(0.5);
+        else
+            blockLift.setPower(0);
+        blockLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //STOP_AND_RESET_ENCODER - current encoder position zero
         //RUN_TO_POSITION - go to target encoder
         //RUN_USING_ENCODER - constant velocity
-        //RUN_WITHOUt_ENCODER - just normal power based
+        //RUN_WITHOUT_ENCODER - just normal power based
     }
     public void loop_relic(){
+        relicClaw.setPosition((1-RELIC_CLAW_LIM)*gamepad2.right_trigger);
+        telemetry.addData("Claw Position",relicClaw.getPosition());
+        this.relicLifter.setTargetPosition( (int)Math.floor((this.gamepad2.left_trigger)*RELIC_LIFT_LIM) );
+        telemetry.addData("Relic Lifter Target Position",(int)Math.floor((this.gamepad2.left_trigger)*RELIC_LIFT_LIM));
+        telemetry.addData("Relic Lifter Current Position,",relicLifter.getCurrentPosition());
+        if(gamepad2.left_bumper)
+            relicLifter.setPower(0.1);
+        else
+            relicLifter.setPower(0);
+        relicLifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        relicPusher.setPower(gamepad2.right_stick_y*0.6);
+        
+        if(gamepad2.dpad_up)
+            relicPanel.setPosition(0);
+        else if(gamepad2.dpad_left)
+            relicPanel.setPosition(0.3);
+        else
+            relicPanel.setPosition(0.8);
     }
+    
     public void loop_colortest(){
-
+        telemetry.addData("Color Sensor",whichColor());
     }
 }
