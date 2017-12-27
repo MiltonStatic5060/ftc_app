@@ -143,14 +143,18 @@ public class TeleOp_3 extends OpMode {
         
         double left_x  = Range.clip( gamepad1.left_stick_x  ,-1,1);
         double left_y  = Range.clip( gamepad1.left_stick_y  ,-1,1);
-        double right_x = Range.clip( gamepad1.right_stick_x ,-1,1);
-        double right_y = Range.clip( gamepad1.right_stick_y ,-1,1);
+        double strife_val = Range.clip( () ? -0.8 : 0.8 ,-1,1); // strife is side to side movements
+        
 
-        double powFR =  Range.clip( left_y + right_y + left_x + right_x , -1 , 1 );
-        double powFL =  Range.clip( left_y + right_y - left_x - right_x , -1 , 1 );
-        double powBR =  Range.clip( left_y + right_y - left_x + right_x , -1 , 1 );
-        double powBL =  Range.clip( left_y + right_y + left_x - right_x , -1 , 1 );
-
+        // double powFR =  Range.clip( left_y + right_y + left_x + right_x , -1 , 1 );
+        // double powFL =  Range.clip( left_y + right_y - left_x - right_x , -1 , 1 );
+        // double powBR =  Range.clip( left_y + right_y - left_x + right_x , -1 , 1 );
+        // double powBL =  Range.clip( left_y + right_y + left_x - right_x , -1 , 1 );
+        double powFR =  Range.clip( left_y + strife_val + left_x , -1 , 1 );
+        double powFL =  Range.clip( left_y - strife_val - left_x , -1 , 1 );
+        double powBR =  Range.clip( left_y - strife_val + left_x , -1 , 1 );
+        double powBL =  Range.clip( left_y + strife_val - left_x , -1 , 1 );
+        
         motorFR.setPower(powFR);
         motorFL.setPower(powFL);
         motorBR.setPower(powBR);
