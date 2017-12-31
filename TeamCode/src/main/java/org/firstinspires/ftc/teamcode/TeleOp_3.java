@@ -44,6 +44,7 @@ public class TeleOp_3 extends OpMode {
     
     @Override
     public void init(){
+        //A list of each motor used for the robit
         motorFL     = hardwareMap.get( DcMotor.class , "motorFL"     );
         motorFR     = hardwareMap.get( DcMotor.class , "motorFR"     );
         motorBL     = hardwareMap.get( DcMotor.class , "motorBL"     );
@@ -58,7 +59,7 @@ public class TeleOp_3 extends OpMode {
         relicPanel  = hardwareMap.get( Servo.class   , "relicPanel");
 
         
-
+        //The direction of the robit's motors are being set
         blockLift.setDirection(   DcMotor.Direction.FORWARD );
         relicPusher.setDirection( DcMotor.Direction.FORWARD );
         relicLifter.setDirection( DcMotor.Direction.FORWARD );
@@ -96,12 +97,13 @@ public class TeleOp_3 extends OpMode {
         this.blockLift.setTargetPosition(0);
         blockLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+    //The loop function calls on 4 other functions that were described before
     @Override
     public void loop(){
-        loop_drive();
-        loop_grabber();
-        loop_colortest();
-        loop_relic();
+        loop_drive(); //The driving function
+        loop_grabber(); //The grabbing function
+        loop_colortest(); //The color sensoring function
+        loop_relic(); //The relic grabber function
     }
     @Override
     public void start(){
@@ -141,10 +143,14 @@ public class TeleOp_3 extends OpMode {
     }
     public void loop_drive(){
         
-        double left_x  = Range.clip( gamepad1.left_stick_x  ,-1,1);
+        double left_x  = Range.clip( gamepad1.left_stick_x  ,-1,1); 
+        //when the left joystick is turned to like a certain horizontal thing, then a certaaiinn value is set to the variable
         double left_y  = Range.clip( gamepad1.left_stick_y  ,-1,1);
+        //when the left joystick is turned to like a certain vertical thing, then a certain value is set to the variable
         double right_x = Range.clip( gamepad1.right_stick_x ,-1,1);
+        //when the right joystick is turned to like a certain horizontal thing, then a certain value is set to the variable
         double right_y = Range.clip( gamepad1.right_stick_y ,-1,1);
+        //when the right joystick is turned to like a certain vertical thing, then a certain value is set to the variable
 
         double powFR =  Range.clip( left_y + right_y + left_x + right_x , -1 , 1 );
         double powFL =  Range.clip( left_y + right_y - left_x - right_x , -1 , 1 );
