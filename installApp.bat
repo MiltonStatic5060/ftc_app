@@ -1,0 +1,1 @@
+..\..\android-sdk\platform-tools\adb.exe install -r apk\TeamCode-debug.apk && pause
