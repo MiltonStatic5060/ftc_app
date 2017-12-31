@@ -146,30 +146,23 @@ public class TeleOp_3 extends OpMode {
         double left_x  = Range.clip( gamepad1.left_stick_x  ,-1,1); 
         //when the left joystick is turned to like a certain horizontal thing, then a certaaiinn value is set to the variable
         double left_y  = Range.clip( gamepad1.left_stick_y  ,-1,1);
-<<<<<<< HEAD
         //when the left joystick is turned to like a certain vertical thing, then a certain value is set to the variable
         double right_x = Range.clip( gamepad1.right_stick_x ,-1,1);
         //when the right joystick is turned to like a certain horizontal thing, then a certain value is set to the variable
         double right_y = Range.clip( gamepad1.right_stick_y ,-1,1);
         //when the right joystick is turned to like a certain vertical thing, then a certain value is set to the variable
 
+        double strife_val = Range.clip( (gamepad1.right_bumper) ? -0.8 : 0.8 ,-1,1); // strafe is side to side movements
+        
+
         double powFR =  Range.clip( left_y + right_y + left_x + right_x , -1 , 1 );
         double powFL =  Range.clip( left_y + right_y - left_x - right_x , -1 , 1 );
         double powBR =  Range.clip( left_y + right_y - left_x + right_x , -1 , 1 );
         double powBL =  Range.clip( left_y + right_y + left_x - right_x , -1 , 1 );
-=======
-        double strife_val = Range.clip( () ? -0.8 : 0.8 ,-1,1); // strife is side to side movements
-        
->>>>>>> 153e1ed6719bf6901b02034965a3630a92c4b3d1
-
-        // double powFR =  Range.clip( left_y + right_y + left_x + right_x , -1 , 1 );
-        // double powFL =  Range.clip( left_y + right_y - left_x - right_x , -1 , 1 );
-        // double powBR =  Range.clip( left_y + right_y - left_x + right_x , -1 , 1 );
-        // double powBL =  Range.clip( left_y + right_y + left_x - right_x , -1 , 1 );
-        double powFR =  Range.clip( left_y + strife_val + left_x , -1 , 1 );
-        double powFL =  Range.clip( left_y - strife_val - left_x , -1 , 1 );
-        double powBR =  Range.clip( left_y - strife_val + left_x , -1 , 1 );
-        double powBL =  Range.clip( left_y + strife_val - left_x , -1 , 1 );
+        // double powFR =  Range.clip( left_y + strife_val + left_x , -1 , 1 );
+        // double powFL =  Range.clip( left_y - strife_val - left_x , -1 , 1 );
+        // double powBR =  Range.clip( left_y - strife_val + left_x , -1 , 1 );
+        // double powBL =  Range.clip( left_y + strife_val - left_x , -1 , 1 );
         
         motorFR.setPower(powFR);
         motorFL.setPower(powFL);
