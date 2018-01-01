@@ -23,6 +23,7 @@ public class ServoTester extends OpMode {
 
     double pos1;
     double delta1;
+    double delta5;
 
     double pos2;
     double pos3;
@@ -49,12 +50,13 @@ public class ServoTester extends OpMode {
         pos3 = 0.4;
         pos4 = 0.6;
         pos5 = 0.8;
+        delta5 = 0.01;
         pos6 = 1.0;
     }
 
     @Override
     public void loop(){
-        if(pos1>=.76 || pos1<=0){
+        if(pos1>=.65 || pos1<=0){
             delta1 *= -1;
             pos1 += delta1;
         }
@@ -62,11 +64,24 @@ public class ServoTester extends OpMode {
             pos1 += delta1;
             pos6 = 1-pos1;
         }
+        if(pos5>=1 || pos2<=0){
+            delta5 *= -1;
+            pos5 += delta5;
+        }
+        if(gamepad1.x||alternateOn){
+            pos5 += delta5;
+            pos2 = 1-pos5;
+        }
         pos1 = Range.clip(pos1,0,1);
+        pos2 = Range.clip(pos2,0,1);
+        pos5 = Range.clip(pos5,0,1);
         pos6 = Range.clip(pos6,0,1);
         telemetry.addData("pos1",pos1);
-        telemetry.addData("pos6",pos6);
-        telemetry.addData("Press Y to make servos 1 and 6 move back and forth",gamepad1.y);
+        telemetry.addData("pos6",pos6+"\n");
+        telemetry.addData("pos2",pos2);
+        telemetry.addData("pos5",pos5);
+        telemetry.addData("Press Y to make servos 1 and 6 alternate",gamepad1.y);
+        telemetry.addData("Press X to make servos 2 and 5 alternate",gamepad1.x);
         servo1.setPosition(pos1);
         servo2.setPosition(pos2);
         servo3.setPosition(pos3);

@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.*;
 
 @TeleOp(name = "TeleOp3", group = "Competition2017-18")
 //@Autonomous(name = "Concept: NullOp", group = "Concept")
-//@Disabled
+@Disabled
 public class TeleOp_3 extends OpMode {
     /* Drive motors */
     public DcMotor  motorFL;
