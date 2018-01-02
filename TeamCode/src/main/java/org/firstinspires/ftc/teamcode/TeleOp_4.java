@@ -24,6 +24,7 @@ public class TeleOp_4 extends OpMode {
     Servo servo2;
     Servo servo3;
     Servo servo4;
+    Servo servo5;
 
     double pos1;
     double pos2;
@@ -39,30 +40,43 @@ public class TeleOp_4 extends OpMode {
     public void init(){
         servo1 = hardwareMap.get( Servo.class, "servo1");
         servo2 = hardwareMap.get( Servo.class, "servo2");
-        // servo3 = hardwareMap.get( Servo.class, "servo3");
-        // servo3 = hardwareMap.get( Servo.class, "servo3");
         servo3 = hardwareMap.get( Servo.class, "servo3");
         servo4 = hardwareMap.get( Servo.class, "servo4");
+        servo5 = hardwareMap.get( Servo.class, "servo5");
+        
+        motorFR = hardwareMap.get( DcMotor.class, "motorFR");
+        motorFL = hardwareMap.get( DcMotor.class, "motorFL");
+        motorBR = hardwareMap.get( DcMotor.class, "motorBR");
+        motorBL = hardwareMap.get( DcMotor.class, "motorBL");
     }
 
     @Override
     public void start(){
-        pos1 = 0;
-        pos2 = 1.0;
+        pos1 = 0.05;
+        pos2 = 0.95;
         delta1 = 0.01;
 
-        pos3 = 0.0;
-        pos4 = 1.0;
+        pos3 = 0.16;
+        pos4 = 0.84;
         delta4 = 0.01;
     }
 
     @Override
     public void loop(){
-        if(pos1>=.65 || pos1<=.06){
-            delta1 *= -1;
-            pos1 += delta1;
+        loop_claw();
+        loop_drive();
+    }
+    public void loop_claw(){
+        double dpadUp = (gamepad1.dpad_up) ? -1 : 0;
+        double dpadDown = (gamepad1.dpad_down) ? 1 : 0;
+        double pow5 = Range.clip( (dpadUp+dpadDown+1)/2.0 ,0,1);
+        servo5.setPosition(pow5);
+
+        if(gamepad1.y){
+            pos1 -= delta1;
+            pos2 = 1-pos1;
         }
-        if(gamepad1.y||alternateOn){
+        if(gamepad1.a){
             pos1 += delta1;
             pos2 = 1-pos1;
         }
@@ -79,8 +93,8 @@ public class TeleOp_4 extends OpMode {
             alternateOn=true;
         if(gamepad1.guide)
             alternateOn=false;
-        pos1 = Range.clip(pos1,0,1);
-        pos2 = Range.clip(pos2,0,1);
+        pos1 = Range.clip(pos1,0,0.65);
+        pos2 = Range.clip(pos2,0.35,1);
         pos3 = Range.clip(pos3,0.16,1);
         pos4 = Range.clip(pos4,0,0.84);
         telemetry.addData("pos1",pos1);
@@ -94,34 +108,35 @@ public class TeleOp_4 extends OpMode {
         servo3.setPosition(pos3);
         servo4.setPosition(pos4);
     }
-
-    
     public void loop_drive(){
         
-        double left_x  = Range.clip( gamepad1.left_stick_x  ,-1,1); 
+        double cardinal_x  = Range.clip( gamepad1.right_stick_x ,-1,1);
         //when the left joystick is turned to like a certain horizontal thing, then a certaaiinn value is set to the variable
-        double left_y  = Range.clip( gamepad1.left_stick_y  ,-1,1);
+        double cardinal_y  = Range.clip( gamepad1.right_stick_y ,-1,1);
         //when the left joystick is turned to like a certain vertical thing, then a certain value is set to the variable
-        double right_x = Range.clip( gamepad1.right_stick_x ,-1,1);
+        double single_x = Range.clip( gamepad1.left_stick_x  ,-1,1); 
         //when the right joystick is turned to like a certain horizontal thing, then a certain value is set to the variable
-        double right_y = Range.clip( gamepad1.right_stick_y ,-1,1);
+        double single_y = Range.clip( gamepad1.left_stick_y  ,-1,1);
         //when the right joystick is turned to like a certain vertical thing, then a certain value is set to the variable
 
-        double strife_val = Range.clip( (gamepad1.right_bumper) ? -0.8 : 0.8 ,-1,1); // strafe is side to side movements
-        
+        double strafe_val = ( (gamepad1.right_bumper) ? 0.8 : 0 )+( (gamepad1.left_bumper) ? -0.8 : 0 ); // strafe is side to side movements
+        strafe_val = Range.clip(strafe_val,-1,1);
 
-        double powFR =  Range.clip( left_y + right_y + left_x + right_x , -1 , 1 );
-        double powFL =  Range.clip( left_y + right_y - left_x - right_x , -1 , 1 );
-        double powBR =  Range.clip( left_y + right_y - left_x + right_x , -1 , 1 );
-        double powBL =  Range.clip( left_y + right_y + left_x - right_x , -1 , 1 );
-        // double powFR =  Range.clip( left_y + strife_val + left_x , -1 , 1 );
-        // double powFL =  Range.clip( left_y - strife_val - left_x , -1 , 1 );
-        // double powBR =  Range.clip( left_y - strife_val + left_x , -1 , 1 );
-        // double powBL =  Range.clip( left_y + strife_val - left_x , -1 , 1 );
+        // double powFR =  Range.clip( cardinal_y + single_y + cardinal_x + single_x , -1 , 1 );
+        // double powFL =  Range.clip( cardinal_y + single_y - cardinal_x - single_x , -1 , 1 );
+        // double powBR =  Range.clip( cardinal_y + single_y - cardinal_x + single_x , -1 , 1 );
+        // double powBL =  Range.clip( cardinal_y + single_y + cardinal_x - single_x , -1 , 1 );
+        double powFR =  Range.clip( single_y - strafe_val + single_x , -1 , 1 );
+        double powFL =  Range.clip( single_y + strafe_val - single_x , -1 , 1 );
+        double powBR =  Range.clip( single_y + strafe_val + single_x , -1 , 1 );
+        double powBL =  Range.clip( single_y - strafe_val - single_x , -1 , 1 );
         
-        motorFR.setPower(powFR);
+        motorFR.setPower(-powFR);
         motorFL.setPower(powFL);
-        motorBR.setPower(powBR);
+        motorBR.setPower(-powBR);
         motorBL.setPower(powBL);
+    }
+    public void loop_dump(){
+        // TODO: complete the dumping section
     }
 }
