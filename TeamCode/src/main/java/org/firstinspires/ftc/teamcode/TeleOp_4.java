@@ -19,6 +19,8 @@ public class TeleOp_4 extends OpMode {
     public DcMotor  motorFR;
     public DcMotor  motorBL;
     public DcMotor  motorBR;
+
+    DcMotor motorDump;
     
     Servo servo1;
     Servo servo2;
@@ -48,51 +50,53 @@ public class TeleOp_4 extends OpMode {
         motorFL = hardwareMap.get( DcMotor.class, "motorFL");
         motorBR = hardwareMap.get( DcMotor.class, "motorBR");
         motorBL = hardwareMap.get( DcMotor.class, "motorBL");
+
+        motorDump = hardwareMap.get( DcMotor.class, "motorDump");
     }
 
     @Override
     public void start(){
         pos1 = 0.05;
         pos2 = 0.95;
-        delta1 = 0.01;
+        delta1 = 0.025; // Determines claw's up and down speed
 
         pos3 = 0.16;
         pos4 = 0.84;
-        delta4 = 0.01;
+        delta4 = 0.025; // Determines claw's contract expand speed
     }
 
     @Override
     public void loop(){
         loop_claw();
         loop_drive();
+        loop_dump();
     }
     public void loop_claw(){
-        double dpadUp = (gamepad1.dpad_up) ? -1 : 0;
-        double dpadDown = (gamepad1.dpad_down) ? 1 : 0;
-        double pow5 = Range.clip( (dpadUp+dpadDown+1)/2.0 ,0,1);
+        double dpadUp = (gamepad1.dpad_up || gamepad2.dpad_up) ? -1 : 0; // -1 is true, 0 is false
+        
+        double dpadDown = (gamepad1.dpad_down || gamepad2.dpad_down) ? 1 : 0; // 1 is true, 0 is false
+
+        double thumbPower = Range.clip(dpadUp+dpadDown+gamepad2.left_stick_y,-1,1);
+        double pow5 = Range.clip( (thumbPower+1)/2.0 ,0,1);
         servo5.setPosition(pow5);
 
-        if(gamepad1.y){
+        if(gamepad2.y || gamepad1.y || gamepad1.left_bumper){
             pos1 -= delta1;
             pos2 = 1-pos1;
         }
-        if(gamepad1.a){
+        if(gamepad2.a || gamepad1.a || gamepad1.right_bumper){
             pos1 += delta1;
             pos2 = 1-pos1;
         }
         
-        if(gamepad1.x){
+        if(gamepad2.x || gamepad1.x || gamepad1.left_trigger>0.5){
             pos4 += delta4;
             pos3 = 1-pos4;
         }
-        if(gamepad1.b){
+        if(gamepad2.b || gamepad1.b || gamepad1.right_trigger>0.5){
             pos4 -= delta4;
             pos3 = 1-pos4;
         }
-        if(gamepad1.back)
-            alternateOn=true;
-        if(gamepad1.guide)
-            alternateOn=false;
         pos1 = Range.clip(pos1,0,0.65);
         pos2 = Range.clip(pos2,0.35,1);
         pos3 = Range.clip(pos3,0.16,1);
@@ -122,14 +126,14 @@ public class TeleOp_4 extends OpMode {
         double strafe_val = ( (gamepad1.right_bumper) ? 0.8 : 0 )+( (gamepad1.left_bumper) ? -0.8 : 0 ); // strafe is side to side movements
         strafe_val = Range.clip(strafe_val,-1,1);
 
-        // double powFR =  Range.clip( cardinal_y + single_y + cardinal_x + single_x , -1 , 1 );
-        // double powFL =  Range.clip( cardinal_y + single_y - cardinal_x - single_x , -1 , 1 );
-        // double powBR =  Range.clip( cardinal_y + single_y - cardinal_x + single_x , -1 , 1 );
-        // double powBL =  Range.clip( cardinal_y + single_y + cardinal_x - single_x , -1 , 1 );
-        double powFR =  Range.clip( single_y - strafe_val + single_x , -1 , 1 );
-        double powFL =  Range.clip( single_y + strafe_val - single_x , -1 , 1 );
-        double powBR =  Range.clip( single_y + strafe_val + single_x , -1 , 1 );
-        double powBL =  Range.clip( single_y - strafe_val - single_x , -1 , 1 );
+        double powFR =  Range.clip( cardinal_y + single_y - cardinal_x + single_x , -1 , 1 );
+        double powFL =  Range.clip( cardinal_y + single_y + cardinal_x - single_x , -1 , 1 );
+        double powBR =  Range.clip( cardinal_y + single_y + cardinal_x + single_x , -1 , 1 );
+        double powBL =  Range.clip( cardinal_y + single_y - cardinal_x - single_x , -1 , 1 );
+        // double powFR =  Range.clip( single_y - strafe_val + single_x , -1 , 1 );
+        // double powFL =  Range.clip( single_y + strafe_val - single_x , -1 , 1 );
+        // double powBR =  Range.clip( single_y + strafe_val + single_x , -1 , 1 );
+        // double powBL =  Range.clip( single_y - strafe_val - single_x , -1 , 1 );
         
         motorFR.setPower(-powFR);
         motorFL.setPower(powFL);
@@ -137,6 +141,10 @@ public class TeleOp_4 extends OpMode {
         motorBL.setPower(powBL);
     }
     public void loop_dump(){
+        double stickPower = gamepad2.left_trigger-gamepad2.right_trigger+( (gamepad1.guide) ? 1 : 0) - ((gamepad1.back) ? 1 : 0);
+        double dumpPower = Range.clip( 0.7*(stickPower),-1,1);
+        motorDump.setPower(dumpPower);
         // TODO: complete the dumping section
+
     }
 }
