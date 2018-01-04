@@ -10,15 +10,15 @@ import com.qualcomm.robotcore.hardware.*;
 
 
 
-@TeleOp(name = "TeleOp4", group = "Competition2017-18")
+@TeleOp(name = "Main TeleOp (4)", group = "Competition2017-18")
 //@Autonomous(name = "Concept: NullOp", group = "Concept")
 //@Disabled
 public class TeleOp_4 extends OpMode {
     /* Drive motors */
-    public DcMotor  motorFL;
-    public DcMotor  motorFR;
-    public DcMotor  motorBL;
-    public DcMotor  motorBR;
+    DcMotor  motorFL;
+    DcMotor  motorFR;
+    DcMotor  motorBL;
+    DcMotor  motorBR;
 
     DcMotor motorDump;
     
@@ -71,6 +71,21 @@ public class TeleOp_4 extends OpMode {
         loop_drive();
         loop_dump();
     }
+
+    /**
+     * gamepad1
+     * dpad_up/dpad_down:           thumb power control
+     * left_trigger/right_trigger:  claw control expand/contract
+     * y/a:                         claw control up/down
+     * a/x:                         claw control expand/contract
+     *      
+     * gamepad2
+     * dpad_up/dpad_down: thumb power control up/down
+     * left_stick_y:      thumb power control
+     * y/a:               claw control up/down
+     * a/x:               claw control expand/contract
+     * 
+     */
     public void loop_claw(){
         double dpadUp = (gamepad1.dpad_up || gamepad2.dpad_up) ? -1 : 0; // -1 is true, 0 is false
         
@@ -80,38 +95,45 @@ public class TeleOp_4 extends OpMode {
         double pow5 = Range.clip( (thumbPower+1)/2.0 ,0,1);
         servo5.setPosition(pow5);
 
-        if(gamepad2.y || gamepad1.y || gamepad1.left_bumper){
-            pos1 -= delta1;
-            pos2 = 1-pos1;
+        if(gamepad2.y || gamepad1.y || gamepad1.left_bumper ){
+            pos1 -= delta1; //  left_bumper1, y on both pads raise up claw
         }
         if(gamepad2.a || gamepad1.a || gamepad1.right_bumper){
-            pos1 += delta1;
-            pos2 = 1-pos1;
+            pos1 += delta1; // right_bumper1, a on both pads lower down claw
         }
-        
+        pos1 += gamepad2.right_stick_y*delta1; // right_stick_y move claw up/down by delta1 factor
+
         if(gamepad2.x || gamepad1.x || gamepad1.left_trigger>0.5){
-            pos4 += delta4;
-            pos3 = 1-pos4;
+            pos4 += delta4; 
         }
         if(gamepad2.b || gamepad1.b || gamepad1.right_trigger>0.5){
             pos4 -= delta4;
-            pos3 = 1-pos4;
         }
+        pos4 -= gamepad2.right_stick_y*delta4; // right_stick_x claw expand/retract by delta4 factor
+
+        pos2 = 1-pos1;
         pos1 = Range.clip(pos1,0,0.65);
         pos2 = Range.clip(pos2,0.35,1);
+
+        pos3 = 1-pos4;
         pos3 = Range.clip(pos3,0.16,1);
         pos4 = Range.clip(pos4,0,0.84);
-        telemetry.addData("pos1",pos1);
-        telemetry.addData("pos2",pos2+"\n");
-        telemetry.addData("pos3",pos3);
-        telemetry.addData("pos4",pos4);
-        telemetry.addData("Press Y to make servos 1 and 2 alternate",gamepad1.y);
-        telemetry.addData("Press X to make servos 3 and 4 alternate",gamepad1.x);
+
+        telemetry.addData("servo arm  1",pos1);
+        telemetry.addData("servo arm  2",pos2);
+        telemetry.addData("servo claw 3",pos3);
+        telemetry.addData("servo claw 4",pos4);
         servo1.setPosition(pos1);
         servo2.setPosition(pos2);
         servo3.setPosition(pos3);
         servo4.setPosition(pos4);
     }
+    /**
+     * gamepad1
+     * left_stick one stick rotation drive
+     * right_stick one stick cardinal drive
+     * right_bumper/left_bumper strafe @Disabled
+     */
     public void loop_drive(){
         
         double cardinal_x  = Range.clip( gamepad1.right_stick_x ,-1,1);
@@ -140,6 +162,15 @@ public class TeleOp_4 extends OpMode {
         motorBR.setPower(-powBR);
         motorBL.setPower(powBL);
     }
+    /**
+     * gamepad2
+     * left trigger is dump down
+     * right trigger is dump up
+     * 
+     * gamepad1
+     * guide is dump down
+     * back is dump up
+     */
     public void loop_dump(){
         double stickPower = gamepad2.left_trigger-gamepad2.right_trigger+( (gamepad1.guide) ? 1 : 0) - ((gamepad1.back) ? 1 : 0);
         double dumpPower = Range.clip( 0.7*(stickPower),-1,1);
