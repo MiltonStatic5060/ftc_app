@@ -23,11 +23,13 @@ public class SensorTest extends OpMode implements SensorEventListener {
     TouchSensor touch1;
     UltrasonicSensor frontDist;
     UltrasonicSensor leftDist;
-    UltrasonicSensor rightDist;
+    // UltrasonicSensor rightDist;
 
     Sensor magnetometer;
     Sensor rotationSensor;
     Sensor accelerometer;
+
+    SensorManager mSensorManager;    
 
     float azimuth = 0.0f;      // value in radians
     float pitch = 0.0f;        // value in radians
@@ -38,11 +40,15 @@ public class SensorTest extends OpMode implements SensorEventListener {
     float[] mGeomagnetic;   // latest sensor values
     float[] mRotationVector;
 
+    public SensorTest(){
+        //empty constructor
+    }
+
     @Override
     public void init(){
         frontDist = hardwareMap.get(UltrasonicSensor.class, "frontDist");
         leftDist  = hardwareMap.get(UltrasonicSensor.class, "leftDist");
-        rightDist = hardwareMap.get(UltrasonicSensor.class, "rightDist");
+        // rightDist = hardwareMap.get(UltrasonicSensor.class, "rightDist");
         touch1    = hardwareMap.get(TouchSensor.class,      "touch1");
 
         mSensorManager = (SensorManager) hardwareMap.appContext.getSystemService(Context.SENSOR_SERVICE);
@@ -69,12 +75,42 @@ public class SensorTest extends OpMode implements SensorEventListener {
     public void loop(){
         telemetry.addData("frontDist ",frontDist);
         telemetry.addData("leftDist  ",leftDist);
-        telemetry.addData("rightDist ",rightDist);
+        // telemetry.addData("rightDist ",rightDist);
         telemetry.addData("touch1    ",touch1);
+        sensor_telemetry();
     }
     @Override
     public void stop() {
         mSensorManager.unregisterListener(this);
+    }
+
+    public void sensor_telemetry(){
+        if (mGravity != null && mGeomagnetic != null && mRotationVector != null) {
+            telemetry.addData("azimuth", Math.round(Math.toDegrees(azimuth)));
+            telemetry.addData("pitch", Math.round(Math.toDegrees(pitch)));
+            telemetry.addData("roll", Math.round(Math.toDegrees(roll)));
+            
+            telemetry.addData("1 x", String.format("%8.4f, y:%8.4f", rotationVector[0], rotationVector[1]));
+            telemetry.addData("2 z", String.format("%8.4f, cos(θ/2):%8.4f", rotationVector[2], rotationVector[3]));
+            telemetry.addData("1 x", rotationVector[0]+", y:"+rotationVector[1]);
+            telemetry.addData("2 z", rotationVector[2]+", cos(θ/2):"+rotationVector[4]);
+            if (rotationVector[4] == -1.0f) {
+                telemetry.addData("3 Accuracy", " value unavailable");
+            } else {
+                telemetry.addData("3 Accuracy", rotationVector[4] + " radians");
+            }
+        }
+        else {
+            if (mGravity != null) {
+                telemetry.addData("note1", "no default accelerometer sensor on phone");
+            }
+            if (mGeomagnetic != null) {
+                telemetry.addData("note2", "no default magnetometer sensor on phone");
+            }
+            if (mRotationVector != null) {
+                telemetry.addData("note", "no default rotation sensor on phone");
+            }
+        }
     }
 
     public void onSensorChanged(SensorEvent event) {
@@ -145,5 +181,8 @@ public class SensorTest extends OpMode implements SensorEventListener {
 
         };
         return arr;
+    }
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // not sure if needed, placeholder just in case
     }
 }

@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.*;
 
 @Autonomous(name = "Main AutoOp (4)", group = "Competition2017-18")
 //@TeleOp(name = "Concept: NullOp", group = "Concept")
-//@Disabled
+@Disabled
 public class AutoOp_4 extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private double nowTime;
@@ -91,7 +91,7 @@ public class AutoOp_4 extends OpMode {
         // loop_drive();
         // loop_dump();
         // (y, cardinal_x, cardinal_y);
-        if(runtime.milliseconds()>2500)
+        if(runtime.milliseconds()>1750)
             auto_drive(0,0,0);
         else
             auto_drive(-1,0,0);
