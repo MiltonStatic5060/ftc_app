@@ -10,28 +10,10 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
-//A whole bunch of Vuforia Stuff
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-//No more Vuforia Stuff
-
-@Autonomous(name = "Red Closer", group = "Competition2017-18")
+@Autonomous(name = "Backup AutoOp (6)", group = "Competition2017-18")
 //@Autonomous(name = "Concept: NullOp", group = "Concept")
 // @Disabled
-
-public class AutoRed0 extends OpMode {
-    String vuforiaLicense = "AZsvxrv/////AAAAmb3WyR5Ma0lWgTCoh2ttuKxH5OJudy851mrB6LQM3l12YtWlMiqByWMN4NJ2jKqgp4epaAcrPkwCUQ86D7iBx5++icywdUxTsIR1J3EjQ5lhQd29NbZWtAAGrp+j1e188N3gqrwMOvD7IIwZoAnVx8EK5z6KEOo3lPne0Hj7Nwq2lqzzqxX+3/1eZcj5/VI9184h7lcNoR6SqSa+DvN4o4fvqO+QOsxBoCp7CfT5gBG343nLgIc6OejoEYHOedhdwmUEdjGObu8tOImMrl0NoO0J+2NkGDZI/iFv5ypmH/0RVDr9r1OhBSS/NUozgTsakKfrbDWQYIP6mDHRAiecYq3W2OtWg63YRRx5IhB9Ht/S";
+public class HardwareOp_6_backup extends OpMode {
     ElapsedTime runtime = new ElapsedTime();
     double nowTime;
     double targetTime;
@@ -43,23 +25,9 @@ public class AutoRed0 extends OpMode {
     DcMotor motorLiftR;
     DcMotor motorLiftL;
     TouchSensor touch1;
-    UltrasonicSensor frontDist;
-    UltrasonicSensor leftDist;
 
-    
-    int team = 1; // 1 is red. -1 is blue.
-    int position = 1; //1 is close. -1 is far
-    int progress_dist = 3; //very imprecise distance of feet to travel forward to shelving
-    
-    boolean didDetection = false;
-    int vuMark = 0; //-1 left. 0 center. 1 right.
-    int ballColor = 1; // 1 is red-blue. -1 is blue-red.
-    int progress = 1; //1 is primary orientation. -1 is secondary.
-    int rotation = 1; //1 is primary rotation. -1 is secondary.
-    int orientation = -rotation;
-
-    int opCounter = 0; // current stage of autonomous
-    int opTime = 1000; // in milliseconds
+    int opCounter = 0;
+   
 
     @Override
     public void init(){
@@ -72,107 +40,51 @@ public class AutoRed0 extends OpMode {
         motorLiftR = hardwareMap.get(DcMotor.class, "motorLiftR");
         motorLiftL = hardwareMap.get(DcMotor.class, "motorLiftL");
         touch1 = hardwareMap.get(TouchSensor.class, "touch1");
-
-        frontDist = hardwareMap.get(UltrasonicSensor.class, "frontDist");
-        leftDist  = hardwareMap.get(UltrasonicSensor.class, "leftDist");
     }
     @Override
     public void start(){
-        tryDetection();
         runtime.reset();
         nowTime = runtime.milliseconds();
     }
-
-    
-
     @Override
     public void loop(){
-        
-        if(runtime.milliseconds()<opTime){
+        if(runtime.milliseconds()<1725){
+            
             switch(opCounter){
                 case 0:
-                    opTime = 5000;
-                    //Try DETECTION for Color & VuMark (if possible) give it 5 seconds
-                    //->Success = bring down arm
-                    if(didDetection){
-                        lowerArm();
-                        opTime = 0;
-                    }
+                    auto_drive(-1,0,0);
+                    telemetry.addData("Mode","Forward");
                     break;
                 case 1:
-                    opTime = 0;
-                    //Set the constants
-                    rotation = team * ballColor;
-                    progress = ballColor * position;
-                    orientation = rotation * -1;
+                    auto_drive(1,0,0);
+                    telemetry.addData("Mode","Backward");
                     break;
                 case 2:
-                    //ROTATION 90 degrees
-                    if(didDetection)
-                        raiseArm();
-                    auto_drive(0,0,rotation);
+                    auto_drive(0,-1,0);
+                    telemetry.addData("Mode","Leftward");
                     break;
                 case 3:
-                    opTime = 500 * progress_dist; // 500 * number of feet
-                    //PROGRESS 3 or 4 ft
-                    auto_drive(progress,0,0);
+                    auto_drive(0,1,0);
+                    telemetry.addData("Mode","Rightward");
                     break;
                 case 4:
-                    //REPOSITION
-                    switch(position){
-                        case 1:
-                            auto_drive(0,0,orientation);
-                            break;
-                        case -1:
-                            auto_drive(0,orientation,0);
-                            break;
-                    }
+                    auto_drive(0,0,1);
+                    telemetry.addData("Mode","Clockwise");
                     break;
-                //---
                 case 5:
-                    //Shelf ALIGNMENT
-                    if(false){
-                        // TODO: if auto alignment is made, then use it
-                        auto_alignment(vuMark);  
-                        opTime = 0;                      
-                    }
-                    else
-                        auto_drive(0,vuMark*0.7,0);
-                    
-                    break;
-                case 6:
-                    //Forward to Shelf
-                    opTime = 5000;
-                    if(frontDist.getUltrasonicLevel()<15 || leftDist.getUltrasonicLevel()<15){
-                        opTime = 0;
-                    }
-                    break;
-                case 7:
-                    // TODO: test this
-                    //Block PLACEMENT
-                    opTime = 5000;
-                    auto_lift(-1);
+                    auto_drive(0,0,-1);
+                    telemetry.addData("Mode","Counterwise");
                     break;
                 default:
-                    opCounter = 10;
-                    auto_drive(0,0,0);
+                    opCounter=0;
             }
-        } else {
-            opTime = 1000;
+        } else if( touch1.isPressed() ){
             runtime.reset();
-            opCounter++;
+            // opCounter++;
+        } else {
+            auto_drive(0,0,0);
         }
-
     }
-    public boolean tryDetection(){
-        
-        return false;
-    }
-    public void raiseArm(){}
-    public void lowerArm(){}
-    public void auto_alignment(int vuMark){}
-
-
     /**
      * description: autonomous version of lift control
      * @param power accepts values -1.0 to 1.0 for up/down lifting. 0 is resting.

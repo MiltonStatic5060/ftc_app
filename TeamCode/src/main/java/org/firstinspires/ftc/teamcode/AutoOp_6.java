@@ -10,11 +10,11 @@ import com.qualcomm.robotcore.hardware.*;
 
 
 
-@Autonomous(name = "Main AutoOp (6)", group = "Competition2017-18")
+@Autonomous(name = "Backup AutoOp (6)", group = "Competition2017-18")
 //@Autonomous(name = "Concept: NullOp", group = "Concept")
-// @Disabled
+@Disabled
 public class AutoOp_6 extends OpMode {
-    HardwareOp_6 robot6 = new HardwareOp_6(hardwareMap);
+    HardwareOp_6 robot6 = new HardwareOp_6();
 
     @Override
     public void init(){

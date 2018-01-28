@@ -10,10 +10,10 @@ import com.qualcomm.robotcore.hardware.*;
 
 
 
-@TeleOp(name = "Main TeleOp (6)", group = "Competition2017-18")
+@TeleOp(name = "Backup TeleOp (6)", group = "Competition2017-18")
 //@Autonomous(name = "Concept: NullOp", group = "Concept")
 //@Disabled
-public class TeleOp_6 extends OpMode {
+public class TeleOp_6_backup extends OpMode {
     DcMotor motorFR;
     DcMotor motorFL;
     DcMotor motorBR;
@@ -42,8 +42,8 @@ public class TeleOp_6 extends OpMode {
     }
     public void loop_lift(){
 
-        double powR = Range.clip(gamepad1.left_trigger - gamepad1.right_trigger + gamepad2.left_trigger - gamepad2.right_trigger, -1 , 1);
-        double powL = powR;
+        double powR = gamepad1.left_trigger - gamepad1.right_trigger;
+        double powL = gamepad1.left_trigger - gamepad1.right_trigger;
 
         motorLiftR.setPower(-powR);
         motorLiftL.setPower(powL);
@@ -65,13 +65,13 @@ public class TeleOp_6 extends OpMode {
      */
     public void loop_drive(){
         
-        double cardinal_x  = Range.clip( gamepad1.right_stick_x + gamepad2.right_stick_x ,-1,1);
+        double cardinal_x  = Range.clip( gamepad1.right_stick_x  ,-1,1);
         //when the left joystick is turned to like a certain horizontal thing, then a certaaiinn value is set to the variable
-        double cardinal_y  = Range.clip( gamepad1.right_stick_y + gamepad2.right_stick_y ,-1,1);
+        double cardinal_y  = Range.clip( gamepad1.right_stick_y ,-1,1);
         //when the left joystick is turned to like a certain vertical thing, then a certain value is set to the variable
-        double single_x = Range.clip( gamepad1.left_stick_x + gamepad2.left_stick_x  ,-1,1); 
+        double single_x = Range.clip( gamepad1.left_stick_x  ,-1,1); 
         //when the right joystick is turned to like a certain horizontal thing, then a certain value is set to the variable
-        double single_y = Range.clip( gamepad1.left_stick_y + gamepad2.left_stick_y  ,-1,1);
+        double single_y = Range.clip( gamepad1.left_stick_y  ,-1,1);
         //when the right joystick is turned to like a certain vertical thing, then a certain value is set to the variable
 
         double strafe_val = ( (gamepad1.right_bumper) ? 0.8 : 0 )+( (gamepad1.left_bumper) ? -0.8 : 0 ); // strafe is side to side movements

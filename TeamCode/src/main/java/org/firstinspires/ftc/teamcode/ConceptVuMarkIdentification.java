@@ -26,7 +26,8 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode.competition2017;
+
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -66,9 +67,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  */
 
 @Autonomous(name="Concept: VuMark Id", group ="Concept")
-@Disabled
+// @Disabled
 public class ConceptVuMarkIdentification extends LinearOpMode {
 
+    public String vuforiaLicense = "AZsvxrv/////AAAAmb3WyR5Ma0lWgTCoh2ttuKxH5OJudy851mrB6LQM3l12YtWlMiqByWMN4NJ2jKqgp4epaAcrPkwCUQ86D7iBx5++icywdUxTsIR1J3EjQ5lhQd29NbZWtAAGrp+j1e188N3gqrwMOvD7IIwZoAnVx8EK5z6KEOo3lPne0Hj7Nwq2lqzzqxX+3/1eZcj5/VI9184h7lcNoR6SqSa+DvN4o4fvqO+QOsxBoCp7CfT5gBG343nLgIc6OejoEYHOedhdwmUEdjGObu8tOImMrl0NoO0J+2NkGDZI/iFv5ypmH/0RVDr9r1OhBSS/NUozgTsakKfrbDWQYIP6mDHRAiecYq3W2OtWg63YRRx5IhB9Ht/S";
     public static final String TAG = "Vuforia VuMark Sample";
 
     OpenGLMatrix lastLocation = null;
@@ -103,7 +105,7 @@ public class ConceptVuMarkIdentification extends LinearOpMode {
          * Once you've obtained a license key, copy the string from the Vuforia web site
          * and paste it in to your code onthe next line, between the double quotes.
          */
-        parameters.vuforiaLicenseKey = "ATsODcD/////AAAAAVw2lR...d45oGpdljdOh5LuFB9nDNfckoxb8COxKSFX";
+        parameters.vuforiaLicenseKey = this.vuforiaLicense;
 
         /*
          * We also indicate which camera on the RC that we wish to use.

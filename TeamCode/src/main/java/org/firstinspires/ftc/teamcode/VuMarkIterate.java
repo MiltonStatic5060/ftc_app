@@ -26,11 +26,13 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode.competition2017;
+
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.*;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -65,12 +67,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * is explained in {@link ConceptVuforiaNavigation}.
  */
 
-@Autonomous(name="Concept: VuMark Id", group ="Concept")
-@Disabled
-public class ConceptVuMarkIdentification extends LinearOpMode {
+@Autonomous(name="Iterating VuMark", group ="Concept")
+// @Disabled
+public class VuMarkIterate extends OpMode {
 
+    public String vuforiaLicense = "AZsvxrv/////AAAAmb3WyR5Ma0lWgTCoh2ttuKxH5OJudy851mrB6LQM3l12YtWlMiqByWMN4NJ2jKqgp4epaAcrPkwCUQ86D7iBx5++icywdUxTsIR1J3EjQ5lhQd29NbZWtAAGrp+j1e188N3gqrwMOvD7IIwZoAnVx8EK5z6KEOo3lPne0Hj7Nwq2lqzzqxX+3/1eZcj5/VI9184h7lcNoR6SqSa+DvN4o4fvqO+QOsxBoCp7CfT5gBG343nLgIc6OejoEYHOedhdwmUEdjGObu8tOImMrl0NoO0J+2NkGDZI/iFv5ypmH/0RVDr9r1OhBSS/NUozgTsakKfrbDWQYIP6mDHRAiecYq3W2OtWg63YRRx5IhB9Ht/S";
     public static final String TAG = "Vuforia VuMark Sample";
-
     OpenGLMatrix lastLocation = null;
 
     /**
@@ -78,15 +80,20 @@ public class ConceptVuMarkIdentification extends LinearOpMode {
      * localization engine.
      */
     VuforiaLocalizer vuforia;
+    VuforiaTrackables relicTrackables;
+    VuforiaTrackable relicTemplate;
 
-    @Override public void runOpMode() {
 
+    VuforiaLocalizer.Parameters parameters;
+    @Override
+    public void init(){
+        
         /*
          * To start up Vuforia, tell it the view that we wish to use for camera monitor (on the RC phone);
          * If no camera monitor is desired, use the parameterless constructor instead (commented out below).
          */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
         // OR...  Do Not Activate the Camera Monitor View, to save power
         // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
@@ -103,7 +110,7 @@ public class ConceptVuMarkIdentification extends LinearOpMode {
          * Once you've obtained a license key, copy the string from the Vuforia web site
          * and paste it in to your code onthe next line, between the double quotes.
          */
-        parameters.vuforiaLicenseKey = "ATsODcD/////AAAAAVw2lR...d45oGpdljdOh5LuFB9nDNfckoxb8COxKSFX";
+        parameters.vuforiaLicenseKey = this.vuforiaLicense;
 
         /*
          * We also indicate which camera on the RC that we wish to use.
@@ -120,61 +127,64 @@ public class ConceptVuMarkIdentification extends LinearOpMode {
          * but differ in their instance id information.
          * @see VuMarkInstanceId
          */
-        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTemplate = relicTrackables.get(0);
+        relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+        relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
 
         telemetry.addData(">", "Press Play to start");
-        telemetry.update();
-        waitForStart();
+        telemetry.update();        
+    }
 
+    @Override
+    public void start(){
         relicTrackables.activate();
+    }
 
-        while (opModeIsActive()) {
+    @Override
+    public void loop(){
+        /**
+         * See if any of the instances of {@link relicTemplate} are currently visible.
+         * {@link RelicRecoveryVuMark} is an enum which can have the following values:
+         * UNKNOWN, LEFT, CENTER, and RIGHT. When a VuMark is visible, something other than
+         * UNKNOWN will be returned by {@link RelicRecoveryVuMark#from(VuforiaTrackable)}.
+         */
+        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+        if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
 
-            /**
-             * See if any of the instances of {@link relicTemplate} are currently visible.
-             * {@link RelicRecoveryVuMark} is an enum which can have the following values:
-             * UNKNOWN, LEFT, CENTER, and RIGHT. When a VuMark is visible, something other than
-             * UNKNOWN will be returned by {@link RelicRecoveryVuMark#from(VuforiaTrackable)}.
-             */
-            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+            /* Found an instance of the template. In the actual game, you will probably
+                * loop until this condition occurs, then move on to act accordingly depending
+                * on which VuMark was visible. */
+            telemetry.addData("VuMark", "%s visible", vuMark);
 
-                /* Found an instance of the template. In the actual game, you will probably
-                 * loop until this condition occurs, then move on to act accordingly depending
-                 * on which VuMark was visible. */
-                telemetry.addData("VuMark", "%s visible", vuMark);
+            /* For fun, we also exhibit the navigational pose. In the Relic Recovery game,
+                * it is perhaps unlikely that you will actually need to act on this pose information, but
+                * we illustrate it nevertheless, for completeness. */
+            OpenGLMatrix pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
+            telemetry.addData("Pose", format(pose));
 
-                /* For fun, we also exhibit the navigational pose. In the Relic Recovery game,
-                 * it is perhaps unlikely that you will actually need to act on this pose information, but
-                 * we illustrate it nevertheless, for completeness. */
-                OpenGLMatrix pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
-                telemetry.addData("Pose", format(pose));
+            /* We further illustrate how to decompose the pose into useful rotational and
+                * translational components */
+            if (pose != null) {
+                VectorF trans = pose.getTranslation();
+                Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
 
-                /* We further illustrate how to decompose the pose into useful rotational and
-                 * translational components */
-                if (pose != null) {
-                    VectorF trans = pose.getTranslation();
-                    Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+                // Extract the X, Y, and Z components of the offset of the target relative to the robot
+                double tX = trans.get(0);
+                double tY = trans.get(1);
+                double tZ = trans.get(2);
 
-                    // Extract the X, Y, and Z components of the offset of the target relative to the robot
-                    double tX = trans.get(0);
-                    double tY = trans.get(1);
-                    double tZ = trans.get(2);
-
-                    // Extract the rotational components of the target relative to the robot
-                    double rX = rot.firstAngle;
-                    double rY = rot.secondAngle;
-                    double rZ = rot.thirdAngle;
-                }
+                // Extract the rotational components of the target relative to the robot
+                double rX = rot.firstAngle;
+                double rY = rot.secondAngle;
+                double rZ = rot.thirdAngle;
             }
-            else {
-                telemetry.addData("VuMark", "not visible");
-            }
-
-            telemetry.update();
         }
+        else {
+            telemetry.addData("VuMark", "not visible");
+        }
+
+        telemetry.update();
+        // return vuMark.toString();
     }
 
     String format(OpenGLMatrix transformationMatrix) {

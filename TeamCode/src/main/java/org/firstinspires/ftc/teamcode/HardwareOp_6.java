@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
-@Autonomous(name = "Main AutoOp (6)", group = "Competition2017-18")
+@Autonomous(name = "Forward+Glyph AutoOp (6)", group = "Competition2017-18")
 //@Autonomous(name = "Concept: NullOp", group = "Concept")
-@Disabled
+// @Disabled
 public class HardwareOp_6 extends OpMode {
     ElapsedTime runtime = new ElapsedTime();
     double nowTime;
@@ -26,12 +26,8 @@ public class HardwareOp_6 extends OpMode {
     DcMotor motorLiftL;
     TouchSensor touch1;
 
-    int opCounter = 0;
-    HardwareMap hardwareMap = null;
-
-    public HardwareOp_6(HardwareMap hrd){
-        this.hardwareMap = hrd;
-    }
+    int opCounter = 1;
+   
 
     @Override
     public void init(){
@@ -50,43 +46,41 @@ public class HardwareOp_6 extends OpMode {
         runtime.reset();
         nowTime = runtime.milliseconds();
     }
+    int opTime = 1725;
+
     @Override
     public void loop(){
-        if(runtime.milliseconds()<1000){
-            
+        telemetry.addData("time",runtime.milliseconds());
+        if(runtime.milliseconds()<opTime){
             switch(opCounter){
-                case 0:
-                    auto_drive(-1,0,0);
-                    telemetry.addData("Mode","Forward");
-                    break;
+                // case 0:
+                //     opTime = 1000;
+                //     auto_lift(1);
+                //     break;
                 case 1:
-                    auto_drive(1,0,0);
+                    opTime = 2200;
+                    auto_drive(.7,0,0);
                     telemetry.addData("Mode","Backward");
                     break;
                 case 2:
-                    auto_drive(0,-1,0);
-                    telemetry.addData("Mode","Leftward");
+                    opTime = 5000;
+                    auto_lift(1);
                     break;
                 case 3:
-                    auto_drive(0,1,0);
-                    telemetry.addData("Mode","Rightward");
-                    break;
-                case 4:
-                    auto_drive(0,0,1);
-                    telemetry.addData("Mode","Clockwise");
-                    break;
-                case 5:
-                    auto_drive(0,0,-1);
-                    telemetry.addData("Mode","Counterwise");
-                    break;
+                    opTime = 500; 
+                    auto_drive(-0.5,0,0);
+                    telemetry.addData("Mode", "Backup a little");
                 default:
-                    opCounter=0;
+                    opCounter=10;
             }
         } else if( touch1.isPressed() ){
-            runtime.reset();
-            opCounter++;
+            
+            // opCounter++;
         } else {
+            runtime.reset();
             auto_drive(0,0,0);
+            auto_lift(0);
+            opCounter++;
         }
     }
     /**
@@ -124,8 +118,8 @@ public class HardwareOp_6 extends OpMode {
         double single_y = Range.clip( gamepad1.left_stick_y  ,-1,1);
         //when the right joystick is turned to like a certain vertical thing, then a certain value is set to the variable
         
-        cardinal_y *= -1;
-        cardinal_x *= -1;
+        cardinal_y *= 1;
+        cardinal_x *= 1;
         single_y = 0;
 
 
