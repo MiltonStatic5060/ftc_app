@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @Autonomous(name = "Backup AutoOp (6)", group = "Competition2017-18")
 //@Autonomous(name = "Concept: NullOp", group = "Concept")
-// @Disabled
+@Disabled
 public class HardwareOp_6_backup extends OpMode {
     ElapsedTime runtime = new ElapsedTime();
     double nowTime;

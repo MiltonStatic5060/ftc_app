@@ -28,7 +28,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 @Autonomous(name = "Red Closer", group = "Competition2017-18")
 //@Autonomous(name = "Concept: NullOp", group = "Concept")
-// @Disabled
+@Disabled
 
 public class AutoRed0 extends OpMode {
     String vuforiaLicense = "AZsvxrv/////AAAAmb3WyR5Ma0lWgTCoh2ttuKxH5OJudy851mrB6LQM3l12YtWlMiqByWMN4NJ2jKqgp4epaAcrPkwCUQ86D7iBx5++icywdUxTsIR1J3EjQ5lhQd29NbZWtAAGrp+j1e188N3gqrwMOvD7IIwZoAnVx8EK5z6KEOo3lPne0Hj7Nwq2lqzzqxX+3/1eZcj5/VI9184h7lcNoR6SqSa+DvN4o4fvqO+QOsxBoCp7CfT5gBG343nLgIc6OejoEYHOedhdwmUEdjGObu8tOImMrl0NoO0J+2NkGDZI/iFv5ypmH/0RVDr9r1OhBSS/NUozgTsakKfrbDWQYIP6mDHRAiecYq3W2OtWg63YRRx5IhB9Ht/S";
