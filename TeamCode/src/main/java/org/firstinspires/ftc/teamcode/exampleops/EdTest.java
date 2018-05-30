@@ -63,7 +63,8 @@ public class EdTest extends OpMode {
             right_stick_button
             dpad_up
             dpad_right
-            dpad_...
+            dpad_down
+            dpad_left
             start
             guide
             back
