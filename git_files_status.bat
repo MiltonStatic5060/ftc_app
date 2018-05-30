@@ -1,1 +1,3 @@
 git status
+pause
+pause
