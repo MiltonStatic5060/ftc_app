@@ -10,15 +10,14 @@ import com.qualcomm.robotcore.hardware.*;
 
 
 
-@TeleOp(name = "EdTest", group = "Competition2017-18")
+@TeleOp(name = "EdTest1", group = "Competition2017-18")
 //@Autonomous(name = "Concept: NullOp", group = "Concept")
 // @Disabled
-public class EdTest extends OpMode {
+public class EdTest1 extends OpMode {
     // Variables
     DcMotor edwardMotor = null;
     
     Servo edwardServo = null;
-
 
 
 

@@ -15,7 +15,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.*;
 
-public class templateOp extends OpMode {
+@TeleOp(name = "Test1", group = "apcsatest")
+// basically it's grouped with the stuff for next
+public class Test1 extends OpMode {
     DcMotor wheel;
     Servo servo;
     DcMotorController motcont1;
@@ -25,7 +27,9 @@ public class templateOp extends OpMode {
     public void init(){
         wheel  = hardwareMap.get(DcMotor.class, "motor1");
         wheel.setPower(0);
-        motcont1 = wheel.getController();    
+        motcont1 = wheel.getController(); // motcont1 is not necessary but good job declaring it anyways
+        
+        // Don't forget the TouchSensor named "touch" on the phone
     }
 
     @Override
