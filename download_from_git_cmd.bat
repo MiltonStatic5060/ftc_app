@@ -1,3 +1,1 @@
-git pull
-pause
-pause
+cmd /k git pull

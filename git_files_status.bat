@@ -1,3 +1,1 @@
-git status
-pause
-pause
+cmd /k git status
