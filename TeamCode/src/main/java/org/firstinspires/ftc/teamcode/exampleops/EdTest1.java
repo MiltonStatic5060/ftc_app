@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.*;
 public class EdTest1 extends OpMode {
     // Variables
     DcMotor edwardMotor = null;
-    
+    TouchSensor touch;
     Servo edwardServo = null;
 
 
@@ -26,6 +26,7 @@ public class EdTest1 extends OpMode {
         // Initialization Code NO MOVEMENT!!!!
         edwardMotor = hardwareMap.get(DcMotor.class, "motor1");
         edwardServo = hardwareMap.get(Servo.class, "Servo");
+        edwardServo.setDirection( edwardServo.Direction.FORWARD);
     }
 
     @Override
@@ -38,7 +39,7 @@ public class EdTest1 extends OpMode {
         loop_motor();
         
 
-        edwardMotor.setPower( gamepad1.left_bumper ? -1 : 0 );
+        //edwardMotor.setPower( gamepad1.left_bumper ? -1 : 0 );
         /** Extended code definition (see above)
             double var;
             if(gamepad1.left_bumper)
@@ -47,8 +48,12 @@ public class EdTest1 extends OpMode {
                 var = 0;
             edwardMotor.setPower(var);
         */
-
+        if(touch.isPressed)
+        {
+            edwardMotor.setPower(1);
+        }
  
+
         /** Everything on Gamepad
             a
             b
@@ -75,12 +80,9 @@ public class EdTest1 extends OpMode {
 
         */
 
+        
         edwardServo.setPosition( gamepad1.right_trigger ); // 0 to 1
         // edwardServo.setPosition( gamepad1.y ? 1 : 0 ); // 0 to 1
-
-        
-        
-        
     }
 
     public void loop_motor(){
