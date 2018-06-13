@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.*;
 
 @TeleOp(name = "Test1", group = "apcsatest")
-// basically it's grouped with the stuff for next
+// basically it's grouped together with any other opmodes you make that are related
 public class Test1 extends OpMode {
     DcMotor wheel;
     Servo servo;
