@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.exampleops;
+package org.firstinspires.ftc.teamcode.competition2019;
 
 import android.hardware.Sensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -10,10 +10,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-//@TeleOp(name = "TeleOpScrimmage", group = "Competition2017-2018")
+@TeleOp(name = "TeleOpScimmage", group = "Competition2017-2018")
 
-@TeleOp
-public class TeleOpScrimmage extends OpMode {
+// @TeleOp()
+public class TeleOpScimmage extends OpMode {
 
     //Variables.
     DcMotor motorFL = null;
